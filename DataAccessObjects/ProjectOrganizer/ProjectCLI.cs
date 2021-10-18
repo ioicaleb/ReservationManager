@@ -145,7 +145,7 @@ namespace ProjectOrganizer
 
             int id = projectDAO.CreateProject(newProj);
 
-            if (id > 0)
+            if (id >= 0)
             {
                 Console.WriteLine("*** SUCCESS ***");
             }

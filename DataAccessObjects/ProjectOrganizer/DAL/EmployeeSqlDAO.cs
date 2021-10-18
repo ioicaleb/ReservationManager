@@ -1,6 +1,7 @@
 ﻿using ProjectOrganizer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace ProjectOrganizer.DAL
 {
@@ -20,7 +21,37 @@ namespace ProjectOrganizer.DAL
         /// <returns>A list of all employees.</returns>
         public ICollection<Employee> GetAllEmployees()
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSelectAll, conn);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee emp = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            StartDate = Convert.ToDateTime(reader["from_date"]),
+                            EndDate = Convert.ToDateTime(reader["to_date"])
+                        };
+
+                        results.Add(emp);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Problem querying database: " + ex.Message);
+            }
+            return results;
         }
 
         /// <summary>
