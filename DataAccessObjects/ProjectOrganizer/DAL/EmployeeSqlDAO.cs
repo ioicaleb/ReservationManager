@@ -9,6 +9,20 @@ namespace ProjectOrganizer.DAL
     {
         private readonly string connectionString;
 
+        private const string SqlSelectAll =
+            "SELECT employee_id, department_id, first_name, last_name, job_title, birth_date, hire_date " +
+            "FROM employee";
+
+        private const string SqlSelectEmployeeByFullName =
+            "SELECT employee_id, department_id, first_name, last_name, job_title, birth_date, hire_date " +
+            "FROM employee " +
+            "WHERE first_name = @first_name AND last_name = @last_name";
+
+        private const string SqlSelectEmployeesNotAssignedToProjects =
+           "SELECT * FROM employee " +
+            "WHERE NOT EXISTS " +
+            "(SELECT employee_id FROM project_employee prem WHERE prem.employee_id = employee.employee_id)";
+
         // Single Parameter Constructor
         public EmployeeSqlDAO(string dbConnectionString)
         {
@@ -39,8 +53,12 @@ namespace ProjectOrganizer.DAL
                         Employee emp = new Employee
                         {
                             EmployeeId = Convert.ToInt32(reader["employee_id"]),
-                            StartDate = Convert.ToDateTime(reader["from_date"]),
-                            EndDate = Convert.ToDateTime(reader["to_date"])
+                            DepartmentId = Convert.ToInt32(reader["department_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
                         };
 
                         results.Add(emp);
@@ -64,7 +82,44 @@ namespace ProjectOrganizer.DAL
         /// <returns>A list of employees that matches the search.</returns>
         public ICollection<Employee> Search(string firstname, string lastname)
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSelectEmployeeByFullName, conn);
+
+                    command.Parameters.AddWithValue("@first_name", firstname);
+                    command.Parameters.AddWithValue("@last_name", lastname);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee emp = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            DepartmentId = Convert.ToInt32(reader["department_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
+                        };
+
+                        results.Add(emp);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Problem querying database: " + ex.Message);
+            }
+            return results;
         }
 
         /// <summary>
@@ -73,7 +128,41 @@ namespace ProjectOrganizer.DAL
         /// <returns></returns>
         public ICollection<Employee> GetEmployeesWithoutProjects()
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSelectEmployeesNotAssignedToProjects, conn);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee emp = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            DepartmentId = Convert.ToInt32(reader["department_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
+                        };
+
+                        results.Add(emp);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Problem querying database: " + ex.Message);
+            }
+            return results;
         }
 
     }

@@ -10,19 +10,21 @@ namespace ProjectOrganizer.DAL
     public class DepartmentSqlDAO : IDepartmentDAO
     {
         private readonly string connectionString;
+
         private const string SqlSelect =
         "SELECT department_id, name " +
         "FROM department";
 
         private const string SqlInsert =
-        "INSERT INTO department (department_id, name) " +
-        "VALUES (@department_id, @name)" +
+        "INSERT INTO department (name) " +
+        "VALUES (@name)" +
         "SELECT @@IDENTITY";
 
 
         private const string SqlUpdate =
-        "UPDATE department" +
-        "SET (@department_id, @name)" +
+        "UPDATE department " +
+        "SET name = @name " +
+        "WHERE department_id = @department_id";
 
 
         // Single Parameter Constructor
@@ -55,6 +57,7 @@ namespace ProjectOrganizer.DAL
                             Id = Convert.ToInt32(reader["department_id"]),
                             Name = Convert.ToString(reader["name"])
                         };
+                        departments.Add(dept);
                     }
 
                 }
@@ -82,12 +85,7 @@ namespace ProjectOrganizer.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlInsert, conn);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    Department dept = new Department();
-                    command.Parameters.AddWithValue("@department_id", dept.Id);
-                    command.Parameters.AddWithValue("@name", dept.Name);
+                    command.Parameters.AddWithValue("@name", newDepartment.Name);
 
                     int id = Convert.ToInt32(command.ExecuteScalar());
                     return id;
@@ -115,10 +113,10 @@ namespace ProjectOrganizer.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlUpdate, conn);
+                    command.Parameters.AddWithValue("@department_id", updatedDepartment.Id);
+                    command.Parameters.AddWithValue("@name", updatedDepartment.Name);
 
-                    Department dept = new Department();
-                    command.Parameters.AddWithValue("@department_id", dept.Id);
-                    command.Parameters.AddWithValue("@name", dept.Name);
+                    command.ExecuteNonQuery();
 
                     return true;
                 }

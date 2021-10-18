@@ -10,16 +10,16 @@ namespace ProjectOrganizer.DAL
         private readonly string connectionString;
 
         private const string SqlSelectAll =
-            "SELECT name, from_date, to_date " +
+            "SELECT project_id, name, from_date, to_date " +
             "FROM project";
 
         private const string SqlAddProject =
-            "INSERT INTO project" +
+            "INSERT INTO project (name, from_date, to_date)" +
             "VALUES (@name, @from_date, @to_date) " +
             "SELECT @@IDENTITY;";
 
         private const string SqlAddEmployee =
-            "INSERT INTO project_employee" +
+            "INSERT INTO project_employee (project_id, employee_id)" +
             "VALUES (@project_id, @employee_id)";
 
 
@@ -56,6 +56,7 @@ namespace ProjectOrganizer.DAL
                     {
                         Project pjt = new Project
                         {
+                            ProjectId = Convert.ToInt32(reader["project_id"]),
                             Name = Convert.ToString(reader["name"]),
                             StartDate = Convert.ToDateTime(reader["from_date"]),
                             EndDate = Convert.ToDateTime(reader["to_date"])
