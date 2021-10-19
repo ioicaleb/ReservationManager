@@ -16,14 +16,19 @@ namespace ProjectTests
         [TestInitialize]
         public void Setup()
         {
+            // Begin the transaction
             transaction = new TransactionScope();
 
+            // Get the SQL Script to run
             string sql = File.ReadAllText("test-script.sql");
 
+            // Execute the script
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
+
                 SqlCommand cmd = new SqlCommand(sql, conn);
+
                 cmd.ExecuteNonQuery();
             }
         }
