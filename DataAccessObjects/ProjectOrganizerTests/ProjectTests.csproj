@@ -17,4 +17,10 @@
     <ProjectReference Include="..\ProjectOrganizer\ProjectOrganizer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="test-script.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
