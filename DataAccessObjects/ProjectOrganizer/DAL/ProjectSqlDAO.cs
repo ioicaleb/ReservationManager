@@ -144,7 +144,6 @@ namespace ProjectOrganizer.DAL
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlAddProject, conn);

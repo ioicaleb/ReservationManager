@@ -5,8 +5,6 @@ using System.Data.SqlClient;
 
 namespace ProjectOrganizer.DAL
 {
-
-
     public class DepartmentSqlDAO : IDepartmentDAO
     {
         private readonly string connectionString;
@@ -59,7 +57,6 @@ namespace ProjectOrganizer.DAL
                         };
                         departments.Add(dept);
                     }
-
                 }
             }
             catch (SqlException ex)
@@ -68,7 +65,6 @@ namespace ProjectOrganizer.DAL
             }
 
             return departments;
-
         }
 
         /// <summary>
