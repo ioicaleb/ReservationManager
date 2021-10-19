@@ -26,9 +26,58 @@ namespace ProjectTests
         }
 
         [TestMethod]
-        public void CheckAddingNewDepartment()
+        public void CheckCreatingDepartmentInsertsIntoTable()
         {
+            // Arrange
+            // adding a new value to the name of the inserting row
+            DepartmentSqlDAO dao = new DepartmentSqlDAO(ConnectionString);
+            Department dept = new Department
+            {
+                Name = "Test"
+            };
 
+            // Act
+            int id = dao.CreateDepartment(dept);
+
+            // Assert
+            Assert.IsTrue(id > 1, "Added department looks to be invalid");
+            Assert.AreEqual(2, GetRowCount("department"));
+        }
+
+        [TestMethod]
+        public void CheckUpdateDepartmentFailsIfDepartmentExist()
+        {
+            // Arrange
+            // Adding a new value to the name of the inserting row
+            DepartmentSqlDAO dao = new DepartmentSqlDAO(ConnectionString);
+            Department dept = new Department
+            {
+                Name = "Department of Doing the Code"
+            };
+
+            // Act
+            int id = dao.CreateDepartment(dept);
+
+            // Assert
+            Assert.IsTrue(id < 0);
+        }
+
+        [TestMethod]
+        public void UpdatingACurrentDepartmentShouldAddNotRow()
+        {
+            // Arrange
+            DepartmentSqlDAO dao = new DepartmentSqlDAO(ConnectionString);
+            Department dept = new Department
+            {
+                Name = "New Test"
+            };
+
+            // Act
+            bool result = dao.UpdateDepartment(dept);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(1, GetRowCount("department"));
         }
     }
 }

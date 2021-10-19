@@ -31,6 +31,10 @@ namespace ProjectOrganizer.DAL
             connectionString = dbConnectionString;
         }
 
+        public DepartmentSqlDAO()
+        {
+        }
+
         /// <summary>
         /// Returns a list of all of the departments.
         /// </summary>
@@ -120,6 +124,7 @@ namespace ProjectOrganizer.DAL
             catch (SqlException ex)
             {
                 Console.WriteLine("Problem querying the database " + ex.Message);
+                throw;
             }
             return false;
         }
