@@ -24,5 +24,11 @@ namespace ProjectTests
             Assert.IsNotNull(results);
             Assert.AreEqual(1, results.Count());
         }
+
+        [TestMethod]
+        public void CheckAddingNewDepartment()
+        {
+
+        }
     }
 }
