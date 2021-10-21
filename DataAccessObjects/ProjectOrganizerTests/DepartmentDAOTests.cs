@@ -63,7 +63,7 @@ namespace ProjectTests
         }
 
         [TestMethod]
-        public void UpdatingACurrentDepartmentShouldAddNotRow()
+        public void UpdatingACurrentDepartmentShouldNotAddRow()
         {
             // Arrange
             DepartmentSqlDAO dao = new DepartmentSqlDAO(ConnectionString);
