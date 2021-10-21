@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Capstone.Models;
 
 namespace Capstone
 {
@@ -28,12 +29,9 @@ namespace Capstone
 
         private readonly string connectionString;
 
-        private readonly VenueDAO venueDAO;
-
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
-            venueDAO = new VenueDAO(connectionString);
         }
 
         public void Run()
@@ -71,40 +69,32 @@ namespace Capstone
             Console.WriteLine("q) Quit");
         }
 
-        // Dictionary considered for storing venu list. This will be a method to select Venues.
-        // For each venu revealed, a user may be able to choose to display all spaces for the venue.
-        public void DisplayVenuList()
-        {
-            Console.WriteLine("1) Hidden Owl Eatery");
-            // Ex: GetSpaces(); for this venue.
-            Console.WriteLine("2) Painted Squirrel Club");
-            Console.WriteLine("3) Rusty Farmer Spot");
-            Console.WriteLine("4) Lilac Bottle Speakeasy");
-            Console.WriteLine("5) Smirking Stone Bistro");
-            Console.WriteLine("6) Blue Nomad Outpost");
-            Console.WriteLine("7) Howling Pour Lounge");
-            Console.WriteLine("8) Feisty Barrel Saloon");
-            Console.WriteLine("9) Proud Lion Hideout");
-            Console.WriteLine("10) Crystal Traveler Taproom");
-            Console.WriteLine("11) Singing Table Pub");
-            Console.WriteLine("12) Curious Anchor Garage");
-            Console.WriteLine("13) Wise Rooster Brewhouse");
-            Console.WriteLine("14) Runaway Time Emporium");
-            Console.WriteLine("15) The Bittersweet Elephant Tavern");
-            Console.WriteLine("R) Return to Previous Screen");
-        }
-
         // Create a version of the methods within the DAL to tryparse user input
         // Select distinct FROM venu order by venue include various categories
-        public void GetUniqueVenues()
+        public void GetVenues()
         {
-            IEnumerable<Venue> venues = VenueDAO.GetUniqueVenues();
+            // Storing result of query into list variable, so it can be used to display what user has chosen.
+            IEnumerable<Venue> venues = VenueDAO.GetVenues();
+
+            // Display the items based on the user's choice
+            Console.WriteLine($"Here are the available venues");
+            // Loop through the list of venues to display them to the user
+
+            int id = 1;
+            foreach (Venue venue in venues)
+            {
+                // Printing out the to string method for venue each loop
+                Console.WriteLine(venue.ToString());
+                id++;
+            }
         }
 
-        // Considering spaces to be retrieved as a JOIN from venue DAL
+        // Reveals list of spaces within the venue selected
         public void GetSpaces()
         {
-
+            IEnumerable<Space> spaces = spaceDAO.GetSpaces();
+            // CLI helper to convert the user's
+            int venueID = CLIHelper.GetInteger("Select from the venue options: ");
         }
 
         // Ability to select a space and search for availability so I can reserve the space.
@@ -118,5 +108,8 @@ namespace Capstone
         {
                 
         }
+
+        // Try parsing the int which is in put by the user selected from venue list.
+        int venueID = CLIHelper.GetInteger("Select from the venue options: ");
     }
 }
