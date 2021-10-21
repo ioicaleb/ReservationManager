@@ -12,16 +12,13 @@ namespace Capstone.DAL
     public class VenueDAO : IVenueDAO
     {
         private const string SqlSelect =
-            "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS Address " +
-            "FROM venue v " +
-            "INNER JOIN city c ON c.id = v.city_id";
+            "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
+            "FROM venue v INNER JOIN city c ON c.id = v.city_id";
 
         private const string SqlSelectCategoryName =
-            "SELECT c.name" +
-            "FROM venue v " +
-            "INNER JOIN category_venue cv ON cv.venue_id = v.id " +
-            "INNER JOIN category c ON c.id = cv.category_id " +
-            "WHERE v.id = cv.venue_id";
+            "SELECT c.name " +
+            "FROM venue v INNER JOIN category_venue cv ON cv.venue_id = v.id INNER JOIN category c ON c.id = cv.category_id " +
+            "WHERE v.id = @id";
 
         private readonly string connectionString;
 
@@ -42,23 +39,21 @@ namespace Capstone.DAL
                     SqlCommand command = new SqlCommand(SqlSelect, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
-
                     while (reader.Read())
                     {
-                        Venue venue = new Venue
-                        {
-                            Id = Convert.ToInt32(reader["v.id"]),
-                            Name = Convert.ToString(reader["v.name"]),
-                            CityId = Convert.ToInt32(reader["v.city_id"]),
-                            Description = Convert.ToString(reader["v.description"]),
-                            Address = Convert.ToString(reader["Address"])
-                        };
+                        Venue venue = new Venue();
+                        venue.Id = Convert.ToInt32(reader["id"]);
+                        venue.Name = Convert.ToString(reader["name"]);
+                        venue.CityId = Convert.ToInt32(reader["city_id"]);
+                        venue.Description = Convert.ToString(reader["description"]);
+                        venue.Address = Convert.ToString(reader["address"]);
                         venue.Categories = GetCategory(venue.Id);
                         venues.Add(venue);
+                    };
 
-                    }
                 }
             }
+
             catch (SqlException ex)
             {
                 Console.WriteLine("Problem querying the database: " + ex.Message);
@@ -75,13 +70,13 @@ namespace Capstone.DAL
                 List<string> categories = new List<string>();
 
                 SqlCommand command = new SqlCommand(SqlSelectCategoryName, conn);
-                command.Parameters.AddWithValue("v.id", venueId);
+                command.Parameters.AddWithValue("@id", venueId);
 
                 SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    category += Convert.ToString(reader["c.name"]);
+                    category += Convert.ToString(reader["name"]) + "|";
                 }
             }
             return category;
