@@ -23,15 +23,18 @@ namespace Capstone
     /// </remarks>
     public class UserInterface
     {
-        private readonly IVenueDAO venueDAO;
-        private readonly IReservationDAO ReservationDAO;
-        private readonly ISpaceDAO spaceDAO;
+       private readonly string connectionString;
 
-        private readonly string connectionString;
+        private readonly IVenueDAO venueDAO;
+       private readonly IReservationDAO reservationDAO;
+       private readonly ISpaceDAO spaceDAO;
 
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
+            venueDAO = new VenueDAO(connectionString);
+            //reservationDAO = new ReservationDAO(connectionString);
+            //spaceDAO = new SpaceDAO(connectionString);
         }
 
         public void Run()
@@ -51,7 +54,7 @@ namespace Capstone
                 {
                     case "1":
                         // method within the venue DAL
-                        DisplayAllVenues();
+                        GetVenues();
                         break;
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
@@ -74,7 +77,7 @@ namespace Capstone
         public void GetVenues()
         {
             // Storing result of query into list variable, so it can be used to display what user has chosen.
-            IEnumerable<Venue> venues = VenueDAO.GetVenues();
+            IEnumerable<Venue> venues = venueDAO.GetVenues();
 
             // Display the items based on the user's choice
             Console.WriteLine($"Here are the available venues");
@@ -106,7 +109,7 @@ namespace Capstone
         // Search availability for space selected
         public void AddReservation()
         {
-
+                
         }
 
         // Try parsing the int which is in put by the user selected from venue list.
