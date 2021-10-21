@@ -53,7 +53,6 @@ namespace Capstone
                         Console.WriteLine();
                         GetVenueMenu(venues);
                         break;
-                        
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
                         return;
@@ -121,12 +120,12 @@ namespace Capstone
         }
 
         // Reveals list of spaces within the venue selected
-        public void GetSpaces(int venueId, string name)
+        public void GetSpacesMenu(int venueId)
         {
             //int venueId = CLIHelper.GetInteger("Select your venue: ");
             IEnumerable<Space> spaces = spaceDAO.GetSpaces(venueId);
             // Need to override to string for space
-            Console.WriteLine($"{name} Spaces");
+            Console.WriteLine($"{venueId} Spaces");
             // This will need changed to a better format
             Console.WriteLine("Name         Open  Close     Daily Rate       Max. Occupancy");
             foreach (Space space in spaces)

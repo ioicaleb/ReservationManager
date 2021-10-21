@@ -9,7 +9,7 @@ namespace Capstone.DAL
     public class SpaceDAO : ISpaceDAO
     {
         private const string SqlSelect =
-            "SELECT s.id, s.venue_id, s.name, s.is_accessible, s.open_from, s.open_to, s.daily_rate, s.max_occupancy, v.name AS venue_name " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, ISNULL(s.open_to, 0) AS open_to, s.daily_rate, s.max_occupancy, v.name AS venue_name " +
             "FROM space s " +
             "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id";
@@ -37,7 +37,7 @@ namespace Capstone.DAL
                     
                     while (reader.Read())
                     {
-                        int openDate = (int)reader["open_from"];
+                        int openDate = Convert.ToInt32(reader["open_from"]);
                         int closeDate = Convert.ToInt32(reader["open_to"]);
                         Space space = new Space
                         {
