@@ -23,10 +23,9 @@ namespace Capstone
     /// </remarks>
     public class UserInterface
     {
-       private readonly IVenueDAO venueDAO;
-       private readonly IReservationDAO ReservationDAO;
-       private readonly ISpaceDAO spaceDAO;
-
+        private readonly IVenueDAO venueDAO;
+        private readonly IReservationDAO ReservationDAO;
+        private readonly ISpaceDAO spaceDAO;
 
         private readonly string connectionString;
 
@@ -107,7 +106,7 @@ namespace Capstone
         // Search availability for space selected
         public void AddReservation()
         {
-                
+
         }
 
         // Try parsing the int which is in put by the user selected from venue list.
