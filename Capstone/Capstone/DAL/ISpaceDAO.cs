@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Capstone.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Capstone.DAL
 {
-    public class ISpaceDAO
+    public interface ISpaceDAO
     {
+        public ICollection<Space> GetSpaces(int venueId);
     }
 }

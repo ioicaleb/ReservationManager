@@ -3,7 +3,6 @@ using Capstone.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Capstone.Models;
 
 namespace Capstone
 {
@@ -23,38 +22,36 @@ namespace Capstone
     /// </remarks>
     public class UserInterface
     {
-       private readonly string connectionString;
+        private readonly string connectionString;
 
         private readonly IVenueDAO venueDAO;
-       private readonly IReservationDAO reservationDAO;
-       private readonly ISpaceDAO spaceDAO;
+        private readonly IReservationDAO reservationDAO;
+        private readonly ISpaceDAO spaceDAO;
 
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
             venueDAO = new VenueDAO(connectionString);
-            //reservationDAO = new ReservationDAO(connectionString);
-            //spaceDAO = new SpaceDAO(connectionString);
+            reservationDAO = new ReservationDAO(connectionString);
+            spaceDAO = new SpaceDAO(connectionString);
         }
 
         public void Run()
         {
             // Display the header
 
-            // Display the menu
-            DisplayMainMenu();
-
-            // Retrieve user input for menu selection.
-            string userInput = Console.ReadLine().ToLower();
-
             while (true)
             {
+                // Display the menu and retrieve user input for menu selection.
+                string userInput = DisplayMainMenu();
+                Console.WriteLine();
                 // switch statement for menu options
                 switch (userInput)
                 {
                     case "1":
                         // method within the venue DAL
                         GetVenues();
+                        Console.WriteLine();
                         break;
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
@@ -66,10 +63,12 @@ namespace Capstone
             }
         }
 
-        public void DisplayMainMenu()
+        public string DisplayMainMenu()
         {
+            Console.WriteLine("What would you like to do?:");
             Console.WriteLine("1) List Venues");
-            Console.WriteLine("q) Quit");
+            Console.WriteLine("Q) Quit");
+            return Console.ReadLine().ToLower();
         }
 
         // Create a version of the methods within the DAL to tryparse user input
@@ -80,15 +79,13 @@ namespace Capstone
             IEnumerable<Venue> venues = venueDAO.GetVenues();
 
             // Display the items based on the user's choice
-            Console.WriteLine($"Here are the available venues");
+            Console.WriteLine($"Here are the available venues: ");
             // Loop through the list of venues to display them to the user
 
-            int id = 1;
             foreach (Venue venue in venues)
             {
                 // Printing out the to string method for venue each loop
                 Console.WriteLine(venue.ToString());
-                id++;
             }
         }
 
@@ -109,10 +106,10 @@ namespace Capstone
         // Search availability for space selected
         public void AddReservation()
         {
-                
+
         }
 
         // Try parsing the int which is in put by the user selected from venue list.
-        int venueID = CLIHelper.GetInteger("Select from the venue options: ");
+        //int venueID = CLIHelper.GetInteger("Select from the venue options: ");
     }
 }
