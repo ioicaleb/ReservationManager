@@ -50,7 +50,7 @@ namespace Capstone
                 {
                     case "1":
                         // method within the venue DAL
-                        GetVenues();
+                        GetVenuesList();
                         Console.WriteLine();
                         break;
                     case "q":
@@ -73,7 +73,7 @@ namespace Capstone
 
         // Create a version of the methods within the DAL to tryparse user input
         // Select distinct FROM venu order by venue include various categories
-        public void GetVenues()
+        public void GetVenuesList()
         {
             // Storing result of query into list variable, so it can be used to display what user has chosen.
             IEnumerable<Venue> venues = venueDAO.GetVenues();
@@ -92,7 +92,7 @@ namespace Capstone
         // Reveals list of spaces within the venue selected
         public void GetSpaces()
         {
-            IEnumerable<Space> spaces = spaceDAO.GetSpaces();
+            //IEnumerable<Space> spaces = spaceDAO.GetSpaces();
             // CLI helper to convert the user's
             int venueID = CLIHelper.GetInteger("Select from the venue options: ");
         }
