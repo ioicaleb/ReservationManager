@@ -13,7 +13,15 @@ namespace Capstone.DAL
     {
         private const string SqlSelect =
             "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS Address " +
-            "FROM venue v INNER JOIN city c ON c.id = v.city_id";
+            "FROM venue v " +
+            "INNER JOIN city c ON c.id = v.city_id";
+
+        private const string SqlSelectCategoryName =
+            "SELECT c.name" +
+            "FROM venue v " +
+            "INNER JOIN category_venue cv ON cv.venue_id = v.id " +
+            "INNER JOIN category c ON c.id = cv.category_id " +
+            "WHERE v.id = cv.venue_id";
 
         private readonly string connectionString;
 
@@ -45,7 +53,7 @@ namespace Capstone.DAL
                             Description = Convert.ToString(reader["v.description"]),
                             Address = Convert.ToString(reader["Address"])
                         };
-
+                        venue.Categories = GetCategory(venue.Id);
                         venues.Add(venue);
 
                     }
@@ -56,6 +64,27 @@ namespace Capstone.DAL
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
             return venues;
+        }
+
+        public string GetCategory(int venueId)
+        {
+            string category = "";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                List<string> categories = new List<string>();
+
+                SqlCommand command = new SqlCommand(SqlSelectCategoryName, conn);
+                command.Parameters.AddWithValue("v.id", venueId);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    category += Convert.ToString(reader["c.name"]);
+                }
+            }
+            return category;
         }
     }
 }

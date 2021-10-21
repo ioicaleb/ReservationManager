@@ -2,6 +2,7 @@
 using Capstone.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Capstone
@@ -52,17 +53,13 @@ namespace Capstone
                         // Return list of venues from GetVenues method
                         ICollection<Venue> venues = GetVenues();
                         Console.WriteLine();
-
-                        // Taking user input
+                        // A new console readline overrides og.
                         userInput = Console.ReadLine();
 
                         // Passing in the user input from having selected a venue along with the venues list
                         GetVenueMenu(userInput, venues);
-                        Console.WriteLine();
-
-
                         break;
-                        
+
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
                         return;
@@ -89,19 +86,17 @@ namespace Capstone
         /// </summary>
         public ICollection<Venue> GetVenues()
         {
-            // Storing result of query into list variable in venueDAO, so it can be used to display.
+            // Storing result of query into list variable in venueDAO, so it can be used to display here.
             ICollection<Venue> venues = venueDAO.GetVenues();
 
             // Display the items based on the user's choice
             Console.WriteLine($"Here are the available venues: ");
-            // Loop through the list of venues to display them to the user
 
+            // Loop through the list of venues to display them to the user
             foreach (Venue venue in venues)
             {
-                // Printing out the to string method for venue each loop
                 Console.WriteLine($"{venue.Id}) {venue.Name}");
             }
-
             Console.WriteLine("R) Return to previous Screen");
             return venues;
         }
@@ -117,7 +112,7 @@ namespace Capstone
             bool valid = false;
             while (!valid)
             {
-                userInput = Console.ReadLine();
+                //userInput = Console.ReadLine();
                 int intValue;
                 if (userInput.ToLower() == "r")
                 {
@@ -127,7 +122,7 @@ namespace Capstone
                 else if (int.TryParse(userInput, out intValue))
                 {
                     Console.Clear();
-                    DisplayVenuDetails(intValue);
+                    DisplayVenueDetails(intValue, venues);
                     valid = true;
                     break;
                 }
@@ -136,61 +131,69 @@ namespace Capstone
         }
 
         /// <summary>
-        /// Details displaying of the Venue itself with some corresponding details
+        /// Displaying details of the venue itself with some a submenu options
         /// </summary>
         /// <param name="venueId"></param>
-        public void DisplayVenuDetails(int venueId) // Takes in the venueId which is parsed num input representing id of venue
+        public void DisplayVenueDetails(int venueId, ICollection<Venue> venues) // Takes in the venueId which is parsed num input representing id of venue
         {
-            //select * from venue where id = @id;
-            //@id, venuId
-            //passed in is intValue which is input input
+            // Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
+            Venue[] venuesArr = venues.ToArray(); // To obtain values by index.
 
-            // Based on venue chosen from the user, displays details about the venue.
-            foreach (Venue venu in venues) // How to pull venue
-            //Name
-            //Location
-            //Categories
+            Venue currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
+            // Details regarding the selected venue, which are stored in a new variable.
+            string name = currVenue.Name;
+            string location = currVenue.Address;
+            string categories = currVenue.Categories;
+            string description = currVenue.Description;
+
+            // Output the information to user
+            Console.WriteLine(name);
+            Console.WriteLine(location);
+            Console.WriteLine(categories);
+            Console.WriteLine(description);
             Console.WriteLine();
-            //Description
-            Console.WriteLine();
-            //Submenu
-            string userInput = VenueSubMenu(); // Must relocate this to be outside of the method
+            VenueSubMenu(venueId);
+        }
+        
+        public void VenueSubMenu(int venueId)
+        {
+            Console.WriteLine("What would you like to do next?");
+            Console.WriteLine("1) View Spaces");
+            Console.WriteLine("2) Search for Reservations");
+            Console.WriteLine("R) Return to Previous Screen");
+            string userInput = Console.ReadLine().ToLower(); // Calling the sub menue to appear
+            // Switch based on user input for the submenu
             switch (userInput)
             {
                 case "1":
-                    ViewSpaces();
+                    // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
+                    GetSpaces(venueId); 
                     break;
                 case "2":
-                    ReservationSearch();
+                   // ReservationSearch();
                     break;
-                case "1":
+                case "R":
                     GetVenues();
                     break;
+                default:
+                    Console.WriteLine("Please select an option from the menu.");
+                    break;
             }
-        }
-
-        public string VenueSubMenu()
-        {
-            Console.WriteLine("1) View Spaces");
-            Console.WriteLine("2) Search for Reservation");
-            Console.WriteLine("R) Return to Previous Screen");
-            return Console.ReadLine().ToLower();
         }
 
         // Reveals list of spaces within the venue selected
         public void GetSpaces(int venueId)
         {
-            //int venueId = CLIHelper.GetInteger("Select your venue: ");
             IEnumerable<Space> spaces = spaceDAO.GetSpaces(venueId);
-            // Need to override to string for space
-            //Console.WriteLine($"{name} Spaces");
-            // This will need changed to a better format
-            Console.WriteLine("Name         Open  Close     Daily Rate       Max. Occupancy");
+            // This will need changed to a better format of spacing
+            Console.WriteLine("Name     Open        Close       Daily Rate      Max. Occupancy");
             foreach (Space space in spaces)
             {
                 Console.WriteLine($"#{space.Id} {space.Name} {space.OpenMonth} {space.CloseMonth} {space.DailyRate} {space.MaxOccupancy}");
             }
-            // Displaying the menu items within the spaces, gets user input and stores it into a string
+
+            // Display a new submenu for user to choose what they would like to do with the spaces
+            SpacesMenu();
         }
 
         /// <summary>
@@ -228,5 +231,28 @@ namespace Capstone
         //int venueID = CLIHelper.GetInteger("Select from the venue options: ");
 
         // Inquire to user about spaces
+
+        public void ParseUserInput(string userInput)
+        {
+            bool valid = false;
+            int intValue;
+            while (!valid)
+            {
+                if (userInput.ToLower() == "r")
+                {
+                    valid = true;
+                    break;
+                }
+                else if (int.TryParse(userInput, out intValue))
+                {
+                    Console.Clear();
+                    valid = true;
+
+                    break;
+                }
+                Console.WriteLine("Invalid input");
+            }
+        }
     }
 }
+
