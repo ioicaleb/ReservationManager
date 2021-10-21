@@ -24,6 +24,7 @@ namespace Capstone
     {
         private readonly string connectionString;
 
+        // Instantiated a new DAO
         private readonly IVenueDAO venueDAO;
         private readonly IReservationDAO reservationDAO;
         private readonly ISpaceDAO spaceDAO;
@@ -48,13 +49,18 @@ namespace Capstone
                 switch (userInput)
                 {
                     case "1":
-                        // method within the venue DAL
+                        // Return list of venues from GetVenues method
                         ICollection<Venue> venues = GetVenues();
                         Console.WriteLine();
+
+                        // Taking user input
                         userInput = Console.ReadLine();
-                        // userInput = id of venue selected
+
+                        // Passing in the user input from having selected a venue along with the venues list
                         GetVenueMenu(userInput, venues);
-                        
+                        Console.WriteLine();
+
+
                         break;
                         
                     case "q":
@@ -79,7 +85,7 @@ namespace Capstone
         }
 
         /// <summary>
-        /// Retrieves the list of the the venues from the database and displays the id and name to the user.
+        /// Retrieves the list of the the venues from the database and displays the id and name to the user to select.
         /// </summary>
         public ICollection<Venue> GetVenues()
         {
@@ -100,6 +106,11 @@ namespace Capstone
             return venues;
         }
 
+        /// <summary>
+        /// A user's input is being parsed to select a particular venue. It then reveals venue details and a submenu.
+        /// </summary>
+        /// <param name="userInput"></param>
+        /// <param name="venues"></param>
         public void GetVenueMenu(string userInput, ICollection<Venue> venues)
         {
             // Spaces
@@ -115,7 +126,8 @@ namespace Capstone
                 }
                 else if (int.TryParse(userInput, out intValue))
                 {
-                    GetSpaces(intValue);
+                    Console.Clear();
+                    DisplayVenuDetails(intValue);
                     valid = true;
                     break;
                 }
@@ -123,29 +135,83 @@ namespace Capstone
             }
         }
 
+        /// <summary>
+        /// Details displaying of the Venue itself with some corresponding details
+        /// </summary>
+        /// <param name="venueId"></param>
+        public void DisplayVenuDetails(int venueId) // Takes in the venueId which is parsed num input representing id of venue
+        {
+            //select * from venue where id = @id;
+            //@id, venuId
+            //passed in is intValue which is input input
+
+            // Based on venue chosen from the user, displays details about the venue.
+            foreach (Venue venu in venues) // How to pull venue
+            //Name
+            //Location
+            //Categories
+            Console.WriteLine();
+            //Description
+            Console.WriteLine();
+            //Submenu
+            string userInput = VenueSubMenu(); // Must relocate this to be outside of the method
+            switch (userInput)
+            {
+                case "1":
+                    ViewSpaces();
+                    break;
+                case "2":
+                    ReservationSearch();
+                    break;
+                case "1":
+                    GetVenues();
+                    break;
+            }
+        }
+
+        public string VenueSubMenu()
+        {
+            Console.WriteLine("1) View Spaces");
+            Console.WriteLine("2) Search for Reservation");
+            Console.WriteLine("R) Return to Previous Screen");
+            return Console.ReadLine().ToLower();
+        }
+
         // Reveals list of spaces within the venue selected
-        public void GetSpaces(int venueId, string name)
+        public void GetSpaces(int venueId)
         {
             //int venueId = CLIHelper.GetInteger("Select your venue: ");
             IEnumerable<Space> spaces = spaceDAO.GetSpaces(venueId);
             // Need to override to string for space
-            Console.WriteLine($"{name} Spaces");
+            //Console.WriteLine($"{name} Spaces");
             // This will need changed to a better format
             Console.WriteLine("Name         Open  Close     Daily Rate       Max. Occupancy");
             foreach (Space space in spaces)
             {
                 Console.WriteLine($"#{space.Id} {space.Name} {space.OpenMonth} {space.CloseMonth} {space.DailyRate} {space.MaxOccupancy}");
             }
-
-            // Display a new submenu for user to choose what they would like to do with the spaces
-            SpacesMenu();
+            // Displaying the menu items within the spaces, gets user input and stores it into a string
         }
 
-        public void SpacesMenu()
+        /// <summary>
+        /// A sub menu present within the spaces available from the Venue selected.
+        /// </summary>
+        public string SpacesMenu()
         {
             Console.WriteLine("1) Reserve a Space");
             Console.WriteLine("R) Return to the Previous Screen");
+            return Console.ReadLine().ToLower();
         }
+
+        // Display information about the space being reserved
+        public void ReserveSpace()
+        {
+            string date = CLIHelper.GetString("When do you need the space?: ");
+            int reservationDuration = CLIHelper.GetInteger("How many days will you need the space?: ");
+            int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
+        }
+
+
         // Ability to select a space and search for availability so I can reserve the space.
         public void SearchSpaceAvailability()
         {
