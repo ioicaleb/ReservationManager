@@ -22,28 +22,28 @@ namespace Capstone
     /// </remarks>
     public class UserInterface
     {
-       private readonly string connectionString;
+        private readonly string connectionString;
 
         private readonly IVenueDAO venueDAO;
-       private readonly IReservationDAO reservationDAO;
-       private readonly ISpaceDAO spaceDAO;
+        private readonly IReservationDAO reservationDAO;
+        private readonly ISpaceDAO spaceDAO;
 
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
             venueDAO = new VenueDAO(connectionString);
-            //reservationDAO = new ReservationDAO(connectionString);
-            //spaceDAO = new SpaceDAO(connectionString);
+            reservationDAO = new ReservationDAO(connectionString);
+            spaceDAO = new SpaceDAO(connectionString);
         }
 
         public void Run()
         {
+            // Display the header
             while (true)
             {
-                // Display the menu
-                DisplayMainMenu();
-                // Retrieve user input for menu selection.
-                string userInput = Console.ReadLine().ToLower();
+                // Display the menu and retrieve user input for menu selection.
+                string userInput = DisplayMainMenu();
+                Console.WriteLine();
                 // switch statement for menu options
                 switch (userInput)
                 {
@@ -70,10 +70,12 @@ namespace Capstone
         /// <summary>
         /// Displays the menu of options to the user to list venues or quit the application.
         /// </summary>
-        public void DisplayMainMenu()
+        public string DisplayMainMenu()
         {
+            Console.WriteLine("What would you like to do?:");
             Console.WriteLine("1) List Venues");
-            Console.WriteLine("q) Quit");
+            Console.WriteLine("Q) Quit");
+            return Console.ReadLine().ToLower();
         }
 
         /// <summary>
@@ -84,9 +86,10 @@ namespace Capstone
             // Storing result of query into list variable in venueDAO, so it can be used to display.
             ICollection<Venue> venues = venueDAO.GetVenues();
 
-            Console.WriteLine($"Here are the available venues");
-
+            // Display the items based on the user's choice
+            Console.WriteLine($"Here are the available venues: ");
             // Loop through the list of venues to display them to the user
+
             foreach (Venue venue in venues)
             {
                 // Printing out the to string method for venue each loop
@@ -152,15 +155,12 @@ namespace Capstone
         // Search availability for space selected
         public void AddReservation()
         {
-                
+
         }
 
         // Try parsing the int which is in put by the user selected from venue list.
         //int venueID = CLIHelper.GetInteger("Select from the venue options: ");
 
         // Inquire to user about spaces
-        Console.WriteLine("When do you need the space?: ");
-            Console.WriteLine("How many days will you need the space?: ");
-            Console.WriteLine("How many people will be in attendance?: ");
     }
 }

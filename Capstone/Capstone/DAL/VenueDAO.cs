@@ -12,8 +12,8 @@ namespace Capstone.DAL
     public class VenueDAO : IVenueDAO
     {
         private const string SqlSelect =
-            "SELECT id, name, city_id, description " +
-            "FROM venue";
+            "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS Address " +
+            "FROM venue v INNER JOIN city c ON c.id = v.city_id";
 
         private readonly string connectionString;
 
@@ -39,8 +39,11 @@ namespace Capstone.DAL
                     {
                         Venue venue = new Venue
                         {
-                            Id = Convert.ToInt32(reader["id"]),
-                            Name = Convert.ToString(reader["name"])
+                            Id = Convert.ToInt32(reader["v.id"]),
+                            Name = Convert.ToString(reader["v.name"]),
+                            CityId = Convert.ToInt32(reader["v.city_id"]),
+                            Description = Convert.ToString(reader["v.description"]),
+                            Address = Convert.ToString(reader["Address"])
                         };
 
                         venues.Add(venue);
