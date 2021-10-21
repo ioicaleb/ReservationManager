@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Capstone.DAL
+﻿namespace Capstone
 {
-    public class ISpaceDAO
+    internal interface ISpaceDAO
     {
     }
 }
