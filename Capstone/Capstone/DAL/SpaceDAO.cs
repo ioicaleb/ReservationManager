@@ -9,7 +9,7 @@ namespace Capstone.DAL
     public class SpaceDAO : ISpaceDAO
     {
         private const string SqlSelect =
-            "SELECT id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, s.open_from, s.open_to, s.daily_rate, s.max_occupancy, v.name " +
             "FROM space s " +
             "INNER JOIN venue v ON v.id = s.venue_id" +
             "WHERE s.venue_id = @s.venue_id";
@@ -39,14 +39,15 @@ namespace Capstone.DAL
                     {
                         Space space = new Space
                         {
-                            Id = Convert.ToInt32(reader["id"]),
-                            VenueId = Convert.ToInt32(reader["venue_id"]),
-                            Name = Convert.ToString(reader["name"]),
-                            IsAccessible = Convert.ToBoolean(reader["is_accessible"]),
-                            OpenDate = Convert.ToInt32(reader["open_from"]),
-                            CloseDate = Convert.ToInt32(reader["open_to"]),
-                            DailyRate = Convert.ToDecimal(reader["daily_rate"]),
-                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"])
+                            Id = Convert.ToInt32(reader["s.id"]),
+                            VenueId = Convert.ToInt32(reader["s.venue_id"]),
+                            Name = Convert.ToString(reader["s.name"]),
+                            IsAccessible = Convert.ToBoolean(reader["s.is_accessible"]),
+                            OpenDate = Convert.ToInt32(reader["s.open_from"]),
+                            CloseDate = Convert.ToInt32(reader["s.open_to"]),
+                            DailyRate = Convert.ToDecimal(reader["s.daily_rate"]),
+                            MaxOccupancy = Convert.ToInt32(reader["s.max_occupancy"]),
+                            VenueName = Convert.ToString(reader["v.name"])
                         };
 
                         spaces.Add(space);

@@ -16,5 +16,6 @@ namespace Capstone.Models
         public string CloseMonth { get; set; }
         public decimal DailyRate { get; set; }
         public int MaxOccupancy { get; set; }
+        public string VenueName { get; set; }
     }
 }
