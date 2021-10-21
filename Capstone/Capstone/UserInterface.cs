@@ -51,10 +51,7 @@ namespace Capstone
                         // method within the venue DAL
                         ICollection<Venue> venues = GetVenues();
                         Console.WriteLine();
-                        userInput = Console.ReadLine();
-                        // userInput = id of venue selected
-                        GetVenueMenu(userInput, venues);
-                        
+                        GetVenueMenu(venues);
                         break;
                         
                     case "q":
@@ -100,13 +97,13 @@ namespace Capstone
             return venues;
         }
 
-        public void GetVenueMenu(string userInput, ICollection<Venue> venues)
+        public void GetVenueMenu(ICollection<Venue> venues)
         {
             // Spaces
             bool valid = false;
             while (!valid)
             {
-                userInput = Console.ReadLine();
+                string userInput = Console.ReadLine();
                 int intValue;
                 if (userInput.ToLower() == "r")
                 {

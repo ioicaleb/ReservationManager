@@ -9,10 +9,10 @@ namespace Capstone.DAL
     public class SpaceDAO : ISpaceDAO
     {
         private const string SqlSelect =
-            "SELECT s.id, s.venue_id, s.name, s.is_accessible, s.open_from, s.open_to, s.daily_rate, s.max_occupancy, v.name " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, s.open_from, s.open_to, s.daily_rate, s.max_occupancy, v.name AS venue_name " +
             "FROM space s " +
-            "INNER JOIN venue v ON v.id = s.venue_id" +
-            "WHERE s.venue_id = @s.venue_id";
+            "INNER JOIN venue v ON v.id = s.venue_id " +
+            "WHERE s.venue_id = @venue_id";
 
         private readonly string connectionString;
 
@@ -31,24 +31,32 @@ namespace Capstone.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlSelect, conn);
-                    command.Parameters.AddWithValue("@s.venue_id", venueId);
+                    command.Parameters.AddWithValue("@venue_id", venueId);
 
                     SqlDataReader reader = command.ExecuteReader();
-
+                    
                     while (reader.Read())
                     {
+                        int openDate = (int)reader["open_from"];
+                        int closeDate = Convert.ToInt32(reader["open_to"]);
                         Space space = new Space
                         {
-                            Id = Convert.ToInt32(reader["s.id"]),
-                            VenueId = Convert.ToInt32(reader["s.venue_id"]),
-                            Name = Convert.ToString(reader["s.name"]),
-                            IsAccessible = Convert.ToBoolean(reader["s.is_accessible"]),
-                            OpenDate = Convert.ToInt32(reader["s.open_from"]),
-                            CloseDate = Convert.ToInt32(reader["s.open_to"]),
-                            DailyRate = Convert.ToDecimal(reader["s.daily_rate"]),
-                            MaxOccupancy = Convert.ToInt32(reader["s.max_occupancy"]),
-                            VenueName = Convert.ToString(reader["v.name"])
+                            Id = Convert.ToInt32(reader["id"]),
+                            VenueId = Convert.ToInt32(reader["venue_id"]),
+                            Name = Convert.ToString(reader["name"]),
+                            IsAccessible = Convert.ToBoolean(reader["is_accessible"]),
+                            DailyRate = Convert.ToDecimal(reader["daily_rate"]),
+                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),
+                            VenueName = Convert.ToString(reader["venue_name"]),
                         };
+                        if (!(openDate == 0))
+                        {
+                            space.OpenDate = openDate;
+                        }
+                        if (!(closeDate == 0))
+                        {
+                            space.CloseDate = closeDate;
+                        }
 
                         spaces.Add(space);
 
