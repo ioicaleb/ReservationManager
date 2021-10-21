@@ -43,8 +43,8 @@ namespace Capstone.DAL
                             VenueId = Convert.ToInt32(reader["venue_id"]),
                             Name = Convert.ToString(reader["name"]),
                             IsAccessible = Convert.ToBoolean(reader["is_accessible"]),
-                            OpenDate = Convert.ToDateTime(reader["open_from"]),
-                            CloseDate = Convert.ToDateTime(reader["open_to"]),
+                            OpenDate = Convert.ToInt32(reader["open_from"]),
+                            CloseDate = Convert.ToInt32(reader["open_to"]),
                             DailyRate = Convert.ToDecimal(reader["daily_rate"]),
                             MaxOccupancy = Convert.ToInt32(reader["max_occupancy"])
                         };

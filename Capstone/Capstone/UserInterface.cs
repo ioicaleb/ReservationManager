@@ -85,7 +85,7 @@ namespace Capstone
             foreach (Venue venue in venues)
             {
                 // Printing out the to string method for venue each loop
-                Console.WriteLine(venue.ToString());
+                Console.WriteLine($"{venue.Id}) {venue.Name}");
             }
         }
 
