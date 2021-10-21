@@ -1,4 +1,5 @@
 ﻿using Capstone.DAL;
+using Capstone.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,8 +28,6 @@ namespace Capstone
 
 
         private readonly string connectionString;
-
-        private readonly VenueDAO venueDAO;
 
         public UserInterface(string connectionString)
         {
