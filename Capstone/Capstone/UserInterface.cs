@@ -25,7 +25,7 @@ namespace Capstone
     {
         private readonly string connectionString;
 
-        // Instantiated a new DAO
+        // Instantiated new DAOs to allow them to take in a db connection string
         private readonly IVenueDAO venueDAO;
         private readonly IReservationDAO reservationDAO;
         private readonly ISpaceDAO spaceDAO;
