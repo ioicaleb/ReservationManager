@@ -9,6 +9,10 @@ namespace Capstone.DAL
     public class ReservationDAO : IReservationDAO   
     {
         private const string SqlSelect =
+<<<<<<< HEAD
+=======
+
+>>>>>>> b2515bdb88348f6954aa9802e21cf26d52c039aa
             "SELECT s.id " +
             "FROM space s " +
             "WHERE s.venue_id = @venue_id " +
@@ -28,6 +32,10 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b2515bdb88348f6954aa9802e21cf26d52c039aa
         public List<int> GetReservations(int venueId, DateTime startDate, int stayLength, int numberOfAttendees)
         {
             List<int> spacesAvailable = new List<int>();
