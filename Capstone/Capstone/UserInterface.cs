@@ -144,10 +144,10 @@ namespace Capstone
             // Output the information to user
             Console.WriteLine(currVenue);
             Console.WriteLine();
-            VenueSubMenu(venueId);
+            VenueSubMenu(venueId, currVenue);
         }
         
-        public void VenueSubMenu(int venueId)
+        public void VenueSubMenu(int venueId, Venue venue)
         {
             Console.WriteLine("What would you like to do next?");
             Console.WriteLine("1) View Spaces");
@@ -159,10 +159,10 @@ namespace Capstone
             {
                 case "1":
                     // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
-                    GetSpaces(venueId); 
+                    GetSpaces(venueId, venue); 
                     break;
                 case "2":
-                   // ReservationSearch();
+                    ReservationSearch();
                     break;
                 case "R":
                     GetVenues();
@@ -174,10 +174,12 @@ namespace Capstone
         }
 
         // Reveals list of spaces within the venue selected
-        public void GetSpaces(int venueId)
+        public void GetSpaces(int venueId, Venue venue)
         {
             IEnumerable<Space> spaces = spaceDAO.GetSpaces(venueId);
             // This will need changed to a better format of spacing
+            Console.Clear();
+            Console.WriteLine($"{venue.Name} spaces"); // Need to pull name from venue
             Console.WriteLine("Name     Open        Close       Daily Rate      Max. Occupancy");
             foreach (Space space in spaces)
             {
@@ -191,30 +193,47 @@ namespace Capstone
         /// <summary>
         /// A sub menu present within the spaces available from the Venue selected.
         /// </summary>
-        public string SpacesMenu()
+        public void SpacesMenu()
         {
+            Console.WriteLine();
+            Console.WriteLine("What would you like to do?");
             Console.WriteLine("1) Reserve a Space");
             Console.WriteLine("R) Return to the Previous Screen");
-            return Console.ReadLine().ToLower();
+            string userInput = Console.ReadLine().ToLower();
+
+            switch (userInput)
+            {
+                case "1":
+                    ReserveSpace();
+                    break;
+                case "r":
+                    break;
+            }
         }
 
-        // Display information about the space being reserved
-        public void ReserveSpace()
+        public void ReservationSearch()
         {
-            string date = CLIHelper.GetString("When do you need the space?: ");
-            int reservationDuration = CLIHelper.GetInteger("How many days will you need the space?: ");
-            int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
+            // Currently have a list of spaces avaialable 
+            // Reservationsearch will narrow the list down by filtering out dates
+        }
+
+
+
+        // Display information about the space being reserved
+        public int ReserveSpace()
+        {
+            CLIHelper.GetString("When do you need the space?: ");
+
+            Console.WriteLine("How many days will you need the space ?");
+            int daysInput = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("How many people will be in attendance ?");
+            int numPeople = Convert.ToInt32(Console.ReadLine());
         }
 
 
         // Ability to select a space and search for availability so I can reserve the space.
         public void SearchSpaceAvailability()
-        {
-
-        }
-
-        // Search availability for space selected
-        public void AddReservation()
         {
 
         }
