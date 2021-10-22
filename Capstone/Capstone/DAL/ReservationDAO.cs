@@ -13,6 +13,11 @@ namespace Capstone.DAL
             "FROM reservation r INNER JOIN space s ON s.id = r.space_id " +
             "WHERE r.space_id = @space_id";
 
+        private const string SqlCreateReservation =
+            "INSERT INTO reservation(space_id, number_of_attendees, start_date, end_date, reserved_for) " +
+            "VALUES(@space_id, @number_of_attendees, @start_date, DATEADD(day, @stay_length, @start_date), @reserved_for) " +
+            "SELECT @@IDENTITY";
+
         private readonly string connectionString;
 
         public ReservationDAO(string connectionString)
@@ -57,6 +62,34 @@ namespace Capstone.DAL
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
             return reservations;
+        }
+
+        public int ReserveSpace(int space_id, int numberOfAttendees, string startDate, int stayLength, string reservationName)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlCreateReservation, conn);
+                    command.Parameters.AddWithValue("@space_id", space_id);
+                    command.Parameters.AddWithValue("@number_of_attendees", numberOfAttendees);
+                    command.Parameters.AddWithValue("@start_date", Convert.ToDateTime(startDate));
+                    command.Parameters.AddWithValue("@stay_length", stayLength);
+                    command.Parameters.AddWithValue("@reserved_for", reservationName);
+
+                    int id = Convert.ToInt32(command.ExecuteScalar());
+
+                    return id;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Problem querying database: " + ex.Message);
+            }
+
+            return -1;
         }
     }
 }
