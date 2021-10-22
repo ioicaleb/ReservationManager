@@ -53,15 +53,11 @@ namespace Capstone
                         // Return list of venues from GetVenues method
                         ICollection<Venue> venues = GetVenues();
                         Console.WriteLine();
-<<<<<<< HEAD
                         // A new console readline overrides og.
-                        userInput = Console.ReadLine();
+                        userInput = Console.ReadLine(); //Normal user input
 
                         // Passing in the user input from having selected a venue along with the venues list
                         GetVenueMenu(userInput, venues);
-=======
-                        GetVenueMenu(venues);
->>>>>>> a58fa6156f07e3dbecfe7684aa2fb8f7023b49fe
                         break;
 
                     case "q":
