@@ -44,7 +44,7 @@ namespace Capstone
         }
 
         /// <summary>
-        /// Begins displaying menu
+        /// Begins display
         /// </summary>
         public void Run()
         {
