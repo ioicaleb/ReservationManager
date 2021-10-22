@@ -76,8 +76,9 @@ namespace Capstone.DAL
 
                 while (reader.Read())
                 {
-                    category += Convert.ToString(reader["name"]) + "|";
+                    category += Convert.ToString(reader["name"]) + "| ";
                 }
+                category += " ";
             }
             return category;
         }
