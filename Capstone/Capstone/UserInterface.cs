@@ -184,28 +184,24 @@ namespace Capstone
             Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "", "Name", "Open", "Close", "Daily Rate", "Max. Occupancy"));
             foreach (KeyValuePair<int, Space> space in spaces)
             {
-                Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5,-5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
+                Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
 
             }
             // Display a new submenu for user to choose what they would like to do with the spaces
 
-            SpacesMenu(spaces, Venue.Id); // In order for spaces to pass venueId to get reservations, must pass in
+            SpacesMenu(spaces); // In order for spaces to pass venueId to get reservations, must pass in
         }
 
 
         /// <summary>
         /// A sub menu present within the spaces available from the Venue selected.
         /// </summary>
-        public void SpacesMenu(Dictionary<int, Space> spaces, int venueId) // This venue id has been passed down for generations
+        public void SpacesMenu(Dictionary<int, Space> spaces) // This venue id has been passed down for generations
         {
             bool valid = false;
             while (!valid)
             {
-                Console.WriteLine();
-                Console.WriteLine("What would you like to do?");
-                Console.WriteLine("1) Reserve a Space");
-                Console.WriteLine("R) Return to the Previous Screen");
-                string userInput = Console.ReadLine().ToLower();
+                string userInput = CLIHelper.GetString("What would you like to do?\n1) Reserve a Space\nR) Return to the Previous Screen\n").ToLower();
 
                 switch (userInput)
                 {
@@ -216,7 +212,7 @@ namespace Capstone
                         // Datetime parse
                         while (!valid)
                         {
-                            Console.WriteLine("When do you need the space? (YYYY/MM/DD) : ");
+                            Console.Write("When do you need the space? (YYYY/MM/DD) : ");
                             string startDateInput = Console.ReadLine();
 
                             if (DateTime.TryParse(startDateInput, out startDate))
@@ -229,7 +225,7 @@ namespace Capstone
                         }
                         int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
                         int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
-                        ICollection<int> spacesAvailable = reservationDAO.GetReservations(venueId, startDate, stayLength, numberOfAttendees);
+                        ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
 
                         // GetReservations in DAO requires a space id and I am passing in venueId here. 
                         // A list of spaces should come up instead of reservations?
@@ -238,6 +234,8 @@ namespace Capstone
                         Console.WriteLine();
                         Console.WriteLine("The following spaces are available based on your needs:");
                         Console.WriteLine();
+                        Console.WriteLine(String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5}",
+                        "Space #", "Name", "Daily Rate", "Max Occup.", "Accessible?", "Total Cost"));
                         DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
                         int spaceChoice = CLIHelper.GetInteger("Which space would you like to reserve (enter 0 to cancel)?: ");
                         if (spaceChoice == 0)
@@ -278,10 +276,12 @@ namespace Capstone
         public void PrintReservationConfirmation(int confirmationNumber, string venueName, string spaceName, string reserverName, int numberOfAttenddees, DateTime startDate, int stayLength, string totalCost)
         {
             Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below: ");
-            Console.WriteLine(); DateTime departDate = startDate.AddDays(stayLength);
+            Console.WriteLine();
+            DateTime departDate = startDate.AddDays(stayLength);
             string output = String.Format
-            ("{0,-16}{1} \n {2,-7},{3} \n {4,7},{5} \n {6,13},{7} \n {8,11}{9} \n {10,14}{11}, \n {12,14}{13} \n {14,11}{15}",
-            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate, "Depart Date: ", departDate, "TotalCost: ", totalCost);
+            ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n{14,16}{15}",
+            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate.ToString("MM/dd/yy"), "Depart Date: ", departDate.ToString("MM/dd/yy"), "TotalCost: ", totalCost);
+            Console.WriteLine(output);
             Console.WriteLine();
         }
     }

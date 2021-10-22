@@ -32,7 +32,7 @@ namespace Capstone.Models
 
         public override string ToString()
         {
-            return String.Format("{0,-5}{1,-33}{2,-13}{3,-5}{4,-4}{5,-12}",
+            return String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5}",
             Id, Name, DailyRate.ToString("C"), MaxOccupancy, Accessible, TotalCost.ToString("C"));
         }
     }
