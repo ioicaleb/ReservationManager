@@ -178,9 +178,7 @@ namespace Capstone
             foreach (KeyValuePair<int, Space> space in spaces)
             {
                 Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
-
             }
-
             // Display a new submenu for user to choose what they would like to do with the spaces
             SpacesMenu(spaces);
         }
@@ -218,11 +216,8 @@ namespace Capstone
                         int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
                         int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
                         ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
-
                         // GetReservations in DAO requires a space id and I am passing in venueId here. 
                         // A list of spaces should come up instead of reservations?
-                        //ICollection<Space> spacesAvailable = reservationDAO.GetReservations(venueId);
-
                         Console.WriteLine();
                         Console.WriteLine("The following spaces are available based on your needs:");
                         Console.WriteLine();
