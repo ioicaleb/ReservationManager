@@ -6,12 +6,12 @@ using System.Text;
 
 namespace Capstone.DAL
 {
-    public class ReservationDAO : IReservationDAO
+    public class ReservationDAO : IReservationDAO   
     {
         private const string SqlSelect =
             "SELECT r.id, r.space_id, r.number_of_attendees, r.start_date, r.end_date, r.reserved_for, s.name" +
             "FROM reservation r INNER JOIN space s ON s.id = r.space_id " +
-            "WHERE r.space_id = @space_id";
+            "WHERE r.space_id = @space_id"; // Requires filtering out any reservations that exist
 
         private const string SqlCreateReservation =
             "INSERT INTO reservation(space_id, number_of_attendees, start_date, end_date, reserved_for) " +
@@ -25,6 +25,7 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        // Returns a list of reservations that correspond to a specific space Id
         public ICollection<Reservation> GetReservations(int spaceId)
         {
             List<Reservation> reservations = new List<Reservation>();

@@ -162,7 +162,7 @@ namespace Capstone
                     GetSpaces(venueId, venue); 
                     break;
                 case "2":
-                    ReservationSearch();
+                    
                     break;
                 case "R":
                     GetVenues();
@@ -176,24 +176,24 @@ namespace Capstone
         // Reveals list of spaces within the venue selected
         public void GetSpaces(int venueId, Venue venue)
         {
-            IEnumerable<Space> spaces = spaceDAO.GetSpaces(venueId);
+            Dictionary<int, Space> spaces = spaceDAO.GetSpaces(venueId);
             // This will need changed to a better format of spacing
             Console.Clear();
             Console.WriteLine($"{venue.Name} spaces"); // Need to pull name from venue
             Console.WriteLine("Name     Open        Close       Daily Rate      Max. Occupancy");
-            foreach (Space space in spaces)
+            foreach (KeyValuePair<int, Space> space in spaces)
             {
-                Console.WriteLine($"#{space.Id} {space.Name} {space.OpenMonth} {space.CloseMonth} {space.DailyRate.ToString("C")} {space.MaxOccupancy}");
+                Console.WriteLine($"#{space.Value.Id} {space.Value.Name} {space.Value.OpenMonth} {space.Value.CloseMonth} {space.Value.DailyRate.ToString("C")} {space.MaxOccupancy}");
             }
 
             // Display a new submenu for user to choose what they would like to do with the spaces
-            SpacesMenu();
+            SpacesMenu(spaces, venueId); // In order for spaces to pass venueId to get reservations, must pass in
         }
 
         /// <summary>
         /// A sub menu present within the spaces available from the Venue selected.
         /// </summary>
-        public void SpacesMenu()
+        public void SpacesMenu(Dictionary<int, Space> spaces, int venueId) // This venue id has been passed down for generations
         {
             Console.WriteLine();
             Console.WriteLine("What would you like to do?");
@@ -204,32 +204,77 @@ namespace Capstone
             switch (userInput)
             {
                 case "1":
-                    ReserveSpace();
+                    // Search for reservations available based on the needs of the customer.
+                    // Obtaining parameters by gathering user info
+                    DateTime startDate = new DateTime(01 / 01 / 2000);
+                    // Datetime parse
+                    bool valid = false;
+                    while (!valid)
+                    {
+                        Console.WriteLine("When do you need the space? (YYYY/MM/DD) : ");
+                        string startDateInput = Console.ReadLine();
+
+                        if (DateTime.TryParse(startDateInput, out startDate))
+                        {
+                            valid = true;
+
+                            break;
+                        }
+
+                        Console.WriteLine("Invalid input, check format.");
+                    }
+
+                    int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
+                    int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
+                    ICollection<int> spacesAvailable = reservationsDAO.GetReservations(venueId, startDate, stayLength, numberOfAttendees);
+
+
+                    // GetReservations in DAO requires a space id and I am passing in venueId here. 
+                    // A list of spaces should come up instead of reservations?
+                    //ICollection<Space> spacesAvailable = reservationDAO.GetReservations(venueId);
+
+                    Console.WriteLine();
+                    Console.WriteLine("The following spaces are available based on your needs:");
+                    Console.WriteLine();
+                    DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
+
                     break;
                 case "r":
                     break;
             }
         }
 
-        public void ReservationSearch()
+        public void DisplayAvailableSpaces(int stayLength, Dictionary<int, Space> spaces, ICollection<int> spacesAvailable)
         {
-            // Currently have a list of spaces avaialable 
-            // Reservationsearch will narrow the list down by filtering out dates
+            Space space = new Space();
+            foreach (int spaceId in spacesAvailable)
+            {
+                space = spaces[spaceId];
+                space.TotalCost = space.DailyRate * stayLength;
+                Console.WriteLine(space);
+            }
+
         }
 
 
 
-        // Display information about the space being reserved
+        // Display inquiries about the space being reserved
         public int ReserveSpace()
         {
-            CLIHelper.GetString("When do you need the space?: ");
-
-            Console.WriteLine("How many days will you need the space ?");
-            int daysInput = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("How many people will be in attendance ?");
-            int numPeople = Convert.ToInt32(Console.ReadLine());
+            // Set equal, the props for a new reservation to the inputs
+            Reservation reservation = new Reservation
+            {
+                StartDate = startDate;
+                // num of resrvation days
+                NumberOfAttendees = numberOfAttendees;
+            }
         }
+        
+
+        
+
+
+        
 
 
         // Ability to select a space and search for availability so I can reserve the space.
