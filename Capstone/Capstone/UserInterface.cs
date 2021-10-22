@@ -187,8 +187,7 @@ namespace Capstone
             Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "", "Name", "Open", "Close", "Daily Rate", "Max. Occupancy"));
             foreach (KeyValuePair<int, Space> space in spaces)
             {
-                Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5,-5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
-
+                Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
             }
             // Display a new submenu for user to choose what they would like to do with the spaces
 
@@ -232,13 +231,9 @@ namespace Capstone
                         }
                         int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
                         int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
-                        ICollection<int> spacesAvailable = reservationDAO.GetReservations(venueId, startDate, stayLength, numberOfAttendees);
-
-                        // GetReservations in DAO requires a space id and I am passing in venueId here. 
-                        // A list of spaces should come up instead of reservations?
-                        //ICollection<Space> spacesAvailable = reservationDAO.GetReservations(venueId);
 
                         
+                        ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
                         DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
                         int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter 0 to cancel)?: ");
                         if (spaceChoice == 0)
@@ -268,9 +263,7 @@ namespace Capstone
             Console.WriteLine("The following spaces are available based on your needs:");
             Console.WriteLine();
             Console.WriteLine(String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5,-12}",
-            //Console.WriteLine(String.Format("{0,-8}{1,15}{2,33}{3,13}{4,14}{5,10}",
                 "Space #", "Name", "Daily Rate", "Max Occup.", "Accessible?", "Total Cost"));
-            //Space #   Name                Daily Rate   Max Occup.   Accessible?   Total Cost
             Space space = new Space();
             foreach (int spaceId in spacesAvailable)
             {
