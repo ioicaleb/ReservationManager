@@ -37,8 +37,6 @@ namespace Capstone.DAL
                     
                     while (reader.Read())
                     {
-                        int openDate = Convert.ToInt32(reader["open_from"]);
-                        int closeDate = Convert.ToInt32(reader["open_to"]);
                         Space space = new Space
                         {
                             Id = Convert.ToInt32(reader["id"]),
@@ -48,19 +46,12 @@ namespace Capstone.DAL
                             DailyRate = Convert.ToDecimal(reader["daily_rate"]),
                             MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),
                             VenueName = Convert.ToString(reader["venue_name"]),
+                            OpenDate = Convert.ToInt32(reader["open_from"]),
+                            CloseDate = Convert.ToInt32(reader["open_to"])
                         };
-                        if (!(openDate == 0))
-                        {
-                            space.OpenDate = openDate;
-                        }
-                        if (!(closeDate == 0))
-                        {
-                            space.CloseDate = closeDate;
-                        }
 
-                        List<string> months = new List<string> { "ALWAYS", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "NEVER"};
-                        space.OpenMonth = months[openDate];
-                        space.CloseMonth = months[closeDate];
+                        space.OpenMonth = ChangeIntToMonthAbbr(space.OpenDate);
+                        space.CloseMonth = ChangeIntToMonthAbbr(space.CloseDate);
 
                         spaces[space.Id] = space;
                     }
@@ -71,6 +62,11 @@ namespace Capstone.DAL
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
             return spaces;
+        }
+        public string ChangeIntToMonthAbbr(int date)
+        {
+            List<string> months = new List<string> { "ALWAYS", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "NEVER" };
+            return months[date];
         }
     }
 }
