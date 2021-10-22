@@ -31,6 +31,10 @@ namespace Capstone
         private readonly ISpaceDAO spaceDAO;
         private Venue Venue = new Venue();
 
+        /// <summary>
+        /// Constructor takes in a database connectionString to pass into each declaration of data access objects.
+        /// </summary>
+        /// <param name="connectionString"></param>
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
@@ -39,9 +43,11 @@ namespace Capstone
             spaceDAO = new SpaceDAO(connectionString);
         }
 
+        /// <summary>
+        /// Begins displaying menu
+        /// </summary>
         public void Run()
         {
-            // Display the header
             bool repeat = true;
             while (repeat)
             {
@@ -71,7 +77,11 @@ namespace Capstone
                             {
                                 Console.Clear();
                                 Venue = DisplayVenueDetails(intValue, venues);
-                                DisplayVenueSubMenu();
+                                while (DisplayVenueSubMenu())
+                                {
+
+                                };
+                                GetSpaces();
                                 valid = true;
                             }
                             else
@@ -146,31 +156,24 @@ namespace Capstone
             return Venue;
         }
 
-        public void DisplayVenueSubMenu()
+        public bool DisplayVenueSubMenu()
         {
-            bool valid = false;
-            while (!valid)
+            string userInput = CLIHelper.GetString("What would you like to do next?\n" +
+                "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n"); // Calling the sub menu to appear
+                                                                                               // Switch based on user input for the submenu
+            switch (userInput)
             {
-                string userInput = CLIHelper.GetString("What would you like to do next?\n" +
-                    "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n"); // Calling the sub menu to appear
-                                                                                                   // Switch based on user input for the submenu
-                switch (userInput)
-                {
-                    case "1":
-                        // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
-                        GetSpaces();
-                        valid = true;
-                        break;
-                    case "2":
-                        valid = true;
-                        break;
-                    case "R":
-                        valid = true;
-                        break;
-                    default:
-                        Console.WriteLine("Please select an option from the menu.");
-                        break;
-                }
+                case "1":
+                    // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
+
+                    return false;
+                case "2":
+                    return false;
+                case "R":
+                    return false;
+                default:
+                    Console.WriteLine("Please select an option from the menu.");
+                    return true;
             }
         }
 
@@ -235,11 +238,9 @@ namespace Capstone
                         // A list of spaces should come up instead of reservations?
                         //ICollection<Space> spacesAvailable = reservationDAO.GetReservations(venueId);
 
-                        Console.WriteLine();
-                        Console.WriteLine("The following spaces are available based on your needs:");
-                        Console.WriteLine();
+                        
                         DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
-                        int spaceChoice = CLIHelper.GetInteger("Which space would you like to reserve (enter 0 to cancel)?: ");
+                        int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter 0 to cancel)?: ");
                         if (spaceChoice == 0)
                         {
                             break; // Need to go back and cancel out of active reservation
@@ -263,8 +264,13 @@ namespace Capstone
 
         public void DisplayAvailableSpaces(int stayLength, Dictionary<int, Space> spaces, ICollection<int> spacesAvailable)
         {
-            // Loops through a dictionary of spaces (int id and space) to output each space available.
-            //Console.WriteLine(String.Format("{0,-4}{1})", ));
+            Console.WriteLine();
+            Console.WriteLine("The following spaces are available based on your needs:");
+            Console.WriteLine();
+            Console.WriteLine(String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5,-12}",
+            //Console.WriteLine(String.Format("{0,-8}{1,15}{2,33}{3,13}{4,14}{5,10}",
+                "Space #", "Name", "Daily Rate", "Max Occup.", "Accessible?", "Total Cost"));
+            //Space #   Name                Daily Rate   Max Occup.   Accessible?   Total Cost
             Space space = new Space();
             foreach (int spaceId in spacesAvailable)
             {
