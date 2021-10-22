@@ -9,9 +9,18 @@ namespace Capstone.DAL
     public class ReservationDAO : IReservationDAO   
     {
         private const string SqlSelect =
+<<<<<<< HEAD
             "SELECT r.id, r.space_id, r.number_of_attendees, r.start_date, r.end_date, r.reserved_for, s.name" +
             "FROM reservation r INNER JOIN space s ON s.id = r.space_id " +
             "WHERE r.space_id = @space_id"; // Requires filtering out any reservations that exist
+=======
+            "SELECT s.id " +
+            "FROM space s " +
+            "WHERE s.venue_id = @venue_id " +
+            "AND max_occupancy < @number_of_attendees " +
+            "AND NOT EXISTS(SELECT * FROM reservation r " +
+            "WHERE r.space_id = s.id AND start_date >= @start_date AND end_date <= @end_date)";
+>>>>>>> 1350383ab49097f740b671bba6be261bcd4ecd5b
 
         private const string SqlCreateReservation =
             "INSERT INTO reservation(space_id, number_of_attendees, start_date, end_date, reserved_for) " +
@@ -25,35 +34,31 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+<<<<<<< HEAD
         // Returns a list of reservations that correspond to a specific space Id
         public ICollection<Reservation> GetReservations(int spaceId)
+=======
+        public List<int> GetReservations(int venueId, DateTime startDate, int stayLength, int numberOfAttendees)
+>>>>>>> 1350383ab49097f740b671bba6be261bcd4ecd5b
         {
-            List<Reservation> reservations = new List<Reservation>();
+            List<int> spacesAvailable = new List<int>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
+                    DateTime endDate = startDate.AddDays(stayLength);
                     SqlCommand command = new SqlCommand(SqlSelect, conn);
-                    command.Parameters.AddWithValue("@space_id", spaceId);
+                    command.Parameters.AddWithValue("@venue_id", venueId);
+                    command.Parameters.AddWithValue("@number_of_attendees", numberOfAttendees);
+                    command.Parameters.AddWithValue("@start_date", startDate);
+                    command.Parameters.AddWithValue("@start_date", endDate);
 
                     SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
-                        Reservation reservation = new Reservation
-                        {
-                            Id = Convert.ToInt32(reader["r.id"]),
-                            SpaceId = Convert.ToInt32(reader["r.space_id"]),
-                            NumberOfAttendees = Convert.ToInt32(reader["r.number_of_attendees"]),
-                            StartDate = Convert.ToDateTime(reader["r.start_date"]),
-                            EndDate = Convert.ToDateTime(reader["r.end_date"]),
-                            ReservedBy = Convert.ToString(reader["r.reserved_for"]),
-                            SpaceName = Convert.ToString(reader["s.name"])
-                        };
-
-                        reservations.Add(reservation);
+                        spacesAvailable.Add(Convert.ToInt32(reader["id"]));
 
                     }
                 }
@@ -62,7 +67,7 @@ namespace Capstone.DAL
             {
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
-            return reservations;
+            return spacesAvailable;
         }
 
         public int ReserveSpace(int space_id, int numberOfAttendees, string startDate, int stayLength, string reservationName)
