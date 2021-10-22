@@ -59,7 +59,7 @@ namespace Capstone
                         // Passing in the user input from having selected a venue along with the venues list
                         GetVenueMenu(userInput, venues);
                         break;
-
+                        
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
                         return;
