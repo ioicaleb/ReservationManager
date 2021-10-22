@@ -42,7 +42,8 @@ namespace Capstone
         public void Run()
         {
             // Display the header
-            while (true)
+            bool repeat = true;
+            while (repeat)
             {
                 // Display the menu and retrieve user input for menu selection.
                 string userInput = DisplayMainMenu();
@@ -70,20 +71,20 @@ namespace Capstone
                             {
                                 Console.Clear();
                                 Venue = DisplayVenueDetails(intValue, venues);
-                                while (DisplayVenueSubMenu())
-                                {
-
-                                };
-                                GetSpaces();
+                                DisplayVenueSubMenu();
                                 valid = true;
                             }
-                            Console.WriteLine("Invalid input");
+                            else
+                            {
+                                Console.WriteLine("Invalid input");
+                            }
                         }
                         break;
 
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
-                        return;
+                        repeat = false;
+                        break;
                     default:
                         Console.WriteLine("Please select an option from the menu.");
                         break;
@@ -145,24 +146,31 @@ namespace Capstone
             return Venue;
         }
 
-        public bool DisplayVenueSubMenu()
+        public void DisplayVenueSubMenu()
         {
-            string userInput = CLIHelper.GetString("What would you like to do next?\n" +
-                "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n"); // Calling the sub menu to appear
-                                                                                               // Switch based on user input for the submenu
-            switch (userInput)
+            bool valid = false;
+            while (!valid)
             {
-                case "1":
-                    // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
-
-                    return false;
-                case "2":
-                    return false;
-                case "R":
-                    return false;
-                default:
-                    Console.WriteLine("Please select an option from the menu.");
-                    return true;
+                string userInput = CLIHelper.GetString("What would you like to do next?\n" +
+                    "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n"); // Calling the sub menu to appear
+                                                                                                   // Switch based on user input for the submenu
+                switch (userInput)
+                {
+                    case "1":
+                        // VenueId arg has been passed into each method connected to this one to retiain id and limit size of methods.
+                        GetSpaces();
+                        valid = true;
+                        break;
+                    case "2":
+                        valid = true;
+                        break;
+                    case "R":
+                        valid = true;
+                        break;
+                    default:
+                        Console.WriteLine("Please select an option from the menu.");
+                        break;
+                }
             }
         }
 
