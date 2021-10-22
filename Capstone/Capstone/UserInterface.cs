@@ -122,14 +122,6 @@ namespace Capstone
         }
 
         /// <summary>
-        /// A user's input is being parsed to select a particular venue. It then reveals venue details and a submenu.
-        /// </summary>
-        /// <param name="userInput"></param>
-        /// <param name="venues"></param>
-
-
-
-        /// <summary>
         /// Displaying details of the venue itself with some a submenu options
         /// </summary>
         /// <param name="venueId"></param>
@@ -152,8 +144,8 @@ namespace Capstone
             while (!valid)
             {
                 string userInput = CLIHelper.GetString("What would you like to do next?\n" +
-                    "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n"); // Calling the sub menu to appear
-                                                                                                   // Switch based on user input for the submenu
+                    "1) View Spaces\n2) Search for Reservations\nR) Return to Previous Screen\n").ToLower(); // Calling the sub menu to appear
+                // Switch based on user input for the submenu
                 switch (userInput)
                 {
                     case "1":
@@ -164,8 +156,9 @@ namespace Capstone
                     case "2":
                         valid = true;
                         break;
-                    case "R":
+                    case "r":
                         valid = true;
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Please select an option from the menu.");
@@ -187,16 +180,16 @@ namespace Capstone
                 Console.WriteLine(String.Format("{0,-5}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "#" + space.Value.Id, space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
 
             }
-            // Display a new submenu for user to choose what they would like to do with the spaces
 
-            SpacesMenu(spaces); // In order for spaces to pass venueId to get reservations, must pass in
+            // Display a new submenu for user to choose what they would like to do with the spaces
+            SpacesMenu(spaces);
         }
 
 
         /// <summary>
         /// A sub menu present within the spaces available from the Venue selected.
         /// </summary>
-        public void SpacesMenu(Dictionary<int, Space> spaces) // This venue id has been passed down for generations
+        public void SpacesMenu(Dictionary<int, Space> spaces)
         {
             bool valid = false;
             while (!valid)
@@ -209,12 +202,11 @@ namespace Capstone
                         // Search for reservations available based on the needs of the customer.
                         // Obtaining parameters by gathering user info
                         DateTime startDate = new DateTime(01 / 01 / 2000);
-                        // Datetime parse
                         while (!valid)
                         {
-                            Console.Write("When do you need the space? (YYYY/MM/DD) : ");
+                            Console.Write("When do you need the space? (YYYY/MM/DD): ");
                             string startDateInput = Console.ReadLine();
-
+                            // Datetime parse
                             if (DateTime.TryParse(startDateInput, out startDate))
                             {
                                 valid = true;
@@ -240,6 +232,7 @@ namespace Capstone
                         int spaceChoice = CLIHelper.GetInteger("Which space would you like to reserve (enter 0 to cancel)?: ");
                         if (spaceChoice == 0)
                         {
+                            Console.WriteLine();
                             break; // Need to go back and cancel out of active reservation
                         }
                         string reserver = CLIHelper.GetString("Who is this reservation for?: ");
@@ -251,6 +244,7 @@ namespace Capstone
                         PrintReservationConfirmation(confirmationNumber, venueName, spaceName, reserver, numberOfAttendees, startDate, stayLength, totalCost);
                         break;
                     case "r":
+                        Console.Clear();
                         break;
                     default:
                         Console.WriteLine("Invalid Input");
