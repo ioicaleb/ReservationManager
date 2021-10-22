@@ -21,9 +21,9 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public ICollection<Space> GetSpaces(int venueId)
+        public Dictionary<int,Space> GetSpaces(int venueId)
         {
-            List<Space> spaces = new List<Space>();
+            Dictionary<int, Space> spaces = new Dictionary<int, Space>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -61,9 +61,8 @@ namespace Capstone.DAL
                         List<string> months = new List<string> { "ALWAYS", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "NEVER"};
                         space.OpenMonth = months[openDate];
                         space.CloseMonth = months[closeDate];
-                        
-                        spaces.Add(space);
 
+                        spaces[space.Id] = space;
                     }
                 }
             }
