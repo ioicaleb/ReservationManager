@@ -231,9 +231,20 @@ namespace Capstone
                         Console.WriteLine("The following spaces are available based on your needs:");
                         Console.WriteLine();
                         DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
+                        int spaceChoice = CLIHelper.GetInteger("Which space would you like to reserve (enter 0 to cancel)?: ");
+                        if (spaceChoice == 0)
+                        {
+                            break; // Need to go back and cancel out of active reservation
+                        }
+                        string reserver = CLIHelper.GetString("Who is this reservation for?: ");
+
+                        int confirmationNumber = reservationDAO.ReserveSpace(spaceChoice, numberOfAttendees, startDate, stayLength, reserver);
+                        string spaceName = spaces[spaceChoice].Name;
+                        string venueName = spaces[spaceChoice].VenueName;
+                        string totalCost = spaces[spaceChoice].TotalCost.ToString("C");
+                        PrintReservationConfirmation(confirmationNumber, venueName, spaceName, reserver, numberOfAttendees, startDate, stayLength, totalCost);
                         break;
                     case "r":
-                        valid = true;
                         break;
                     default:
                         Console.WriteLine("Invalid Input");
@@ -245,6 +256,7 @@ namespace Capstone
         public void DisplayAvailableSpaces(int stayLength, Dictionary<int, Space> spaces, ICollection<int> spacesAvailable)
         {
             // Loops through a dictionary of spaces (int id and space) to output each space available.
+            //Console.WriteLine(String.Format("{0,-4}{1})", ));
             Space space = new Space();
             foreach (int spaceId in spacesAvailable)
             {
@@ -252,7 +264,6 @@ namespace Capstone
                 space.TotalCost = space.DailyRate * stayLength;
                 Console.WriteLine(space);
             }
-
         }
 
         // Perform the reservation (ReserveSpace in DAO)
