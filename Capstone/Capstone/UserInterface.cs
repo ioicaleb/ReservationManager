@@ -140,17 +140,9 @@ namespace Capstone
             Venue[] venuesArr = venues.ToArray(); // To obtain values by index.
 
             Venue currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
-            // Details regarding the selected venue, which are stored in a new variable.
-            string name = currVenue.Name;
-            string location = currVenue.Address;
-            string categories = currVenue.Categories;
-            string description = currVenue.Description;
 
             // Output the information to user
-            Console.WriteLine(name);
-            Console.WriteLine(location);
-            Console.WriteLine(categories);
-            Console.WriteLine(description);
+            Console.WriteLine(currVenue);
             Console.WriteLine();
             VenueSubMenu(venueId);
         }
@@ -189,7 +181,7 @@ namespace Capstone
             Console.WriteLine("Name     Open        Close       Daily Rate      Max. Occupancy");
             foreach (Space space in spaces)
             {
-                Console.WriteLine($"#{space.Id} {space.Name} {space.OpenMonth} {space.CloseMonth} {space.DailyRate} {space.MaxOccupancy}");
+                Console.WriteLine($"#{space.Id} {space.Name} {space.OpenMonth} {space.CloseMonth} {space.DailyRate.ToString("C")} {space.MaxOccupancy}");
             }
 
             // Display a new submenu for user to choose what they would like to do with the spaces

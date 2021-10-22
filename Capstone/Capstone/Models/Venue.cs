@@ -17,7 +17,7 @@ namespace Capstone.Models
     {
         return $"{Name}\n" +
                 $"Location: {Address}\n" +
-                $"Categories: {Categories.Replace("|", ", ").Replace(",  ", "")}\n\n" +
+                $"Categories: {Categories.Replace("|", ",").Replace(",  ", "")}\n\n" +
                 $"{Description}";
     }
 
