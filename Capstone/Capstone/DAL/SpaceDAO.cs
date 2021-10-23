@@ -9,15 +9,15 @@ namespace Capstone.DAL
     public class SpaceDAO : ISpaceDAO
     {
         private const string SqlSelect =
-            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 13) AS open_from, " +
-                "ISNULL(s.open_to, 0) AS open_to, s.daily_rate, s.max_occupancy " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
+                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id";
 
         private const string SqlSearch =
-            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 13) AS open_from, " +
-                "ISNULL(s.open_to, 0) AS open_to, s.daily_rate, s.max_occupancy, " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
+                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy, " +
             "FROM space s " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id " +
@@ -111,9 +111,9 @@ namespace Capstone.DAL
 
                         if (space.TotalCost <= budget)
                         {
-                            if (category == null || venue.Categories.Contains(category))
+                            if (category == "N" || venue.Categories.Contains(category))
                             {
-                                if(space.OpenDate >= desiredMonth && space.CloseDate <= desiredMonth)
+                                if(space.OpenDate <= desiredMonth && space.CloseDate >= desiredMonth)
                                 {
                                     spaces[space.Id] = space;
                                 }
@@ -131,7 +131,7 @@ namespace Capstone.DAL
 
         public string ChangeIntToMonthAbbr(int date)
         {
-            List<string> months = new List<string> { "NEVER", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "ALWAYS" };
+            List<string> months = new List<string> { "ALWAYS", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "NEVER" };
             return months[date];
         }
     }

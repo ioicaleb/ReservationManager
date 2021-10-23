@@ -8,8 +8,8 @@ namespace Capstone.DAL
 {
     public class ReservationDAO : IReservationDAO   
     {
-        private const string SqlSelect =
-            "SELECT s.id, r.start_date " +
+        private const string SqlSelectAvailableSpaces =
+            "SELECT s.id " +
             "FROM space s " +
             "WHERE s.venue_id = @venue_id " +
             "AND max_occupancy >= @number_of_attendees " +
@@ -29,7 +29,7 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public List<int> GetReservations(int venueId, DateTime startDate, int stayLength, int numberOfAttendees)
+        public List<int> GetAvailableSpaces(int venueId, DateTime startDate, int stayLength, int numberOfAttendees)
         {
             List<int> spacesAvailable = new List<int>();
             try
@@ -38,7 +38,7 @@ namespace Capstone.DAL
                 {
                     conn.Open();
                     DateTime endDate = startDate.AddDays(stayLength);
-                    SqlCommand command = new SqlCommand(SqlSelect, conn);
+                    SqlCommand command = new SqlCommand(SqlSelectAvailableSpaces, conn);
                     command.Parameters.AddWithValue("@venue_id", venueId);
                     command.Parameters.AddWithValue("@number_of_attendees", numberOfAttendees);
                     command.Parameters.AddWithValue("@start_date", startDate);

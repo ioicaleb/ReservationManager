@@ -190,7 +190,7 @@ namespace Capstone
             DateTime startDate = GetDate();
             int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
             int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
-            ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
+            ICollection<int> spacesAvailable = reservationDAO.GetAvailableSpaces(Venue.Id, startDate, stayLength, numberOfAttendees);
             DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
             valid = DisplayReservationMenu(spaces, startDate, stayLength, numberOfAttendees);
             return valid;
