@@ -25,6 +25,10 @@ namespace Capstone
                 Console.Write(message + " ");
                 userInput = Console.ReadLine();
                 numberOfAttempts++;
+                if (userInput.ToLower() == "r")
+                {
+                    return -1;
+                }
             }
             while (!int.TryParse(userInput, out intValue));
 
