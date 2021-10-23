@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Capstone.Models
@@ -13,6 +14,23 @@ namespace Capstone.Models
         public string Address { get; set; }
         public string Description { get; set; }
         public string Categories { get; set; }
+
+
+        /// <summary>
+        /// Takes in user input for venue choice and a list of venues, converts list to array.
+        /// Uses the user input to pick desired venue from array by index.
+        /// </summary>
+        /// <param name="venueId"></param>
+        public Venue GetSelectedVenue(int venueId, ICollection<Venue> venues) // Takes in the venueId which is parsed num input representing id of venue
+        {
+            // Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
+            Venue[] venuesArr = venues.ToArray(); // To obtain values by index.
+
+            Venue  currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
+
+            return currVenue;
+        }
+
         public override string ToString()
         {
             return $"{Name}\n" +
