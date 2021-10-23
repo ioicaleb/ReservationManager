@@ -53,7 +53,7 @@ namespace Capstone
             while (repeat)
             {
                 // Display the menu and retrieve user input for menu selection.
-                string userInput = CLIHelper.GetString("What would you like to do?:\n1) List Venues\nQ) Quit");
+                string userInput = CLIHelper.GetString("What would you like to do?:\n1) List Venues\nQ) Quit\n");
                 // switch statement for menu options
                 switch (userInput)
                 {
@@ -87,7 +87,7 @@ namespace Capstone
                     Console.Clear();
                     leaveMenu = true;
                 }
-                else if (userInt >= venues.Count())
+                else if (userInt >= venues.Count() || userInt <= 0)
                 {
                     Console.Clear();
                     Console.WriteLine("Invalid input. Venue not available");
@@ -159,6 +159,7 @@ namespace Capstone
             bool valid = false;
             while (!valid)
             {
+                
                 DisplaySpaceDetails(spaces);
                 Console.WriteLine();
                 string userInput = CLIHelper.GetString("What would you like to do?\n1) Reserve a Space\nR) Return to the Previous Screen\n").ToLower();
@@ -170,6 +171,10 @@ namespace Capstone
                         int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
                         int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
                         ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
+                        if (spacesAvailable.Count < 1)
+                        {
+                            return false;
+                        }
                         DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
                         valid = DisplayReservationMenu(spaces, startDate, stayLength, numberOfAttendees);
                         break;
@@ -232,21 +237,37 @@ namespace Capstone
                 Console.WriteLine(space);
             }
         }
+
         public bool DisplayReservationMenu(Dictionary<int, Space> spaces, DateTime startDate, int stayLength, int numberOfAttendees)
         {
-            int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter 0 to cancel)?: ");
-            if (spaceChoice == 0)
+            bool valid = false;
+            while (!valid)
             {
-                Console.Clear();
-                return false; // Need to go back and cancel out of active reservation
+                int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter 0 to cancel)?: ");
+                if (spaceChoice == 0)
+                {
+                    Console.Clear();
+                    return false; // Need to go back and cancel out of active reservation
+                }
+                else if (spaces.ContainsKey(spaceChoice))
+                {
+                    string reserver = CLIHelper.GetString("Who is this reservation for?: ");
+                    int confirmationNumber = reservationDAO.ReserveSpace(spaceChoice, numberOfAttendees, startDate, stayLength, reserver);
+                    string spaceName = spaces[spaceChoice].Name;
+                    string venueName = spaces[spaceChoice].VenueName;
+                    string totalCost = spaces[spaceChoice].TotalCost.ToString("C");
+                    PrintReservationConfirmation(confirmationNumber, venueName, spaceName, reserver, numberOfAttendees, startDate, stayLength, totalCost);
+                    Console.WriteLine();
+                    return true;
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid input");
+                    Console.WriteLine();
+                }
             }
-            string reserver = CLIHelper.GetString("Who is this reservation for?: ");
-            int confirmationNumber = reservationDAO.ReserveSpace(spaceChoice, numberOfAttendees, startDate, stayLength, reserver);
-            string spaceName = spaces[spaceChoice].Name;
-            string venueName = spaces[spaceChoice].VenueName;
-            string totalCost = spaces[spaceChoice].TotalCost.ToString("C");
-            PrintReservationConfirmation(confirmationNumber, venueName, spaceName, reserver, numberOfAttendees, startDate, stayLength, totalCost);
-            return true;
+            return false;
         }
 
         // Perform the reservation (ReserveSpace in DAO)
@@ -255,9 +276,10 @@ namespace Capstone
             Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below: ");
             Console.WriteLine(); DateTime departDate = startDate.AddDays(stayLength);
             string output = String.Format
-            ("{0,-16}{1} \n {2,-7},{3} \n {4,7},{5} \n {6,13},{7} \n {8,11}{9} \n {10,14}{11}, \n {12,14}{13} \n {14,11}{15}",
-            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate, "Depart Date: ", departDate, "TotalCost: ", totalCost);
-            Console.WriteLine();
+            ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n{14,16}{15}",
+            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate.ToString("MM/dd/YYYY"), "Depart Date: ", departDate.ToString("MM/dd/YYYY"), "TotalCost: ", totalCost);
+            Console.WriteLine(output);
+            Console.ReadKey();
         }
     }
 }
