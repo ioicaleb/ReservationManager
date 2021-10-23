@@ -27,11 +27,12 @@ namespace Capstone
                 numberOfAttempts++;
                 if (userInput.ToLower() == "r")
                 {
+                    Console.WriteLine();
                     return -1;
                 }
             }
             while (!int.TryParse(userInput, out intValue));
-
+            Console.WriteLine();
             return intValue;
         }
 
@@ -54,6 +55,7 @@ namespace Capstone
             }
             while (!double.TryParse(userInput, out doubleValue));
 
+            Console.WriteLine();
             return doubleValue;
         }
 
@@ -76,6 +78,7 @@ namespace Capstone
             }
             while (!bool.TryParse(userInput, out boolValue));
 
+            Console.WriteLine();
             return boolValue;
         }
 
@@ -97,6 +100,7 @@ namespace Capstone
             }
             while (string.IsNullOrEmpty(userInput));
 
+            Console.WriteLine();
             return userInput;
         }
     }

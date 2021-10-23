@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capstone.DAL;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -29,6 +30,9 @@ namespace Capstone.Models
         public int MaxOccupancy { get; set; }
         public string VenueName { get; set; }
         public decimal TotalCost { get; set; }
+
+        // Reveals list of spaces within the venue selected
+        
 
         public override string ToString()
         {
