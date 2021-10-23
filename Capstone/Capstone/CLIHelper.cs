@@ -95,5 +95,33 @@ namespace Capstone
 
             return userInput;
         }
+
+        public static string GetIntOrR(string message)
+        {
+            string userInput;
+            int intValue;
+            int numberOfAttempts = 0;
+
+            do
+            {
+                if (numberOfAttempts > 0)
+                {
+                    Console.WriteLine("Invalid input format. Please try again");
+                }
+
+                Console.Write(message + " ");
+                userInput = Console.ReadLine();
+                numberOfAttempts++;
+
+            }
+            while (!int.TryParse(userInput, out intValue) && userInput != "r");
+
+            if (userInput == "r")
+            {
+                // Here is where it goes to previous menu.
+            }
+            string input = Convert.ToString(intValue);
+            return input;
+        }
     }
 }

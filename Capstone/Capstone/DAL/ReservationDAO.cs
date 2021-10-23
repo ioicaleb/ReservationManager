@@ -8,6 +8,7 @@ namespace Capstone.DAL
 {
     public class ReservationDAO : IReservationDAO   
     {
+        // Finds all of the spaces available to reserve, based on paramter filtering by user input, (when, how many days and people?).
         private const string SqlSelect =
             "SELECT s.id " +
             "FROM space s " +
