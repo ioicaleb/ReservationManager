@@ -21,6 +21,11 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// A new dictionary of Key: Space ID and Value: Space, created by obtaining all spaces from a selected venue.
+        /// </summary>
+        /// <param name="venueId"></param>
+        /// <returns></returns>
         public Dictionary<int,Space> GetSpaces(int venueId)
         {
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
@@ -53,6 +58,7 @@ namespace Capstone.DAL
                         space.OpenMonth = ChangeIntToMonthAbbr(space.OpenDate);
                         space.CloseMonth = ChangeIntToMonthAbbr(space.CloseDate);
 
+                        // Collects the actual id from the space as a key, and the entire space will be stored as it's value.
                         spaces[space.Id] = space;
                     }
                 }
