@@ -49,7 +49,6 @@ namespace Capstone.DAL
                     while (reader.Read())
                     {
                         spacesAvailable.Add(Convert.ToInt32(reader["id"]));
-
                     }
                 }
             }

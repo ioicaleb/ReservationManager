@@ -30,7 +30,6 @@ namespace Capstone
         private readonly IReservationDAO reservationDAO;
         private readonly ISpaceDAO spaceDAO;
         private Venue Venue = new Venue();
-        private Space space = new Space();
 
         /// <summary>
         /// Constructor takes in a database connectionString to pass into each declaration of data access objects.
@@ -187,7 +186,7 @@ namespace Capstone
         public bool DisplaySortedSpaces(Dictionary<int, Space> spaces)
         {
             bool valid;
-            DateTime startDate = GetDate();
+            DateTime startDate = CLIHelper.GetDate();
             int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
             int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
             ICollection<int> spacesAvailable = reservationDAO.GetAvailableSpaces(Venue.Id, startDate, stayLength, numberOfAttendees);
@@ -207,26 +206,7 @@ namespace Capstone
                 Console.WriteLine(String.Format("{0,4}{1,-33}{2,-9}{3,-9}{4,-13}{5}", space.Value.Id + ") ", space.Value.Name, space.Value.OpenMonth, space.Value.CloseMonth, space.Value.DailyRate.ToString("C"), space.Value.MaxOccupancy));
             }
         }
-        public DateTime GetDate()
-        {
-            bool valid = false;
-            Console.Clear();
-            // Search for reservations available based on the needs of the customer
-            DateTime startDate = new DateTime(01 / 01 / 2000);
-            while (!valid)
-            {
-                string startDateInput = CLIHelper.GetString("When do you need the space? (YYYY/MM/DD) : ");
-                // Datetime parse
-                if (DateTime.TryParse(startDateInput, out startDate))
-                {
-                    valid = true;
-
-                    break;
-                }
-                Console.WriteLine("Invalid input, check format.");
-            }
-            return startDate;
-        }
+        
         public void DisplayAvailableSpaces(int stayLength, Dictionary<int, Space> spaces, ICollection<int> spacesAvailable)
         {
             Console.WriteLine();
@@ -279,7 +259,8 @@ namespace Capstone
         public void PrintReservationConfirmation(int confirmationNumber, string venueName, string spaceName, string reserverName, int numberOfAttenddees, DateTime startDate, int stayLength, string totalCost)
         {
             Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below: ");
-            Console.WriteLine(); DateTime departDate = startDate.AddDays(stayLength);
+            Console.WriteLine(); 
+            DateTime departDate = startDate.AddDays(stayLength);
             string output = String.Format
             ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n{14,16}{15}",
             "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate.ToString("MM/dd/yyyy"), "Depart Date: ", departDate.ToString("MM/dd/yyyy"), "TotalCost: ", totalCost);
@@ -291,4 +272,3 @@ namespace Capstone
         }
     }
 }
-
