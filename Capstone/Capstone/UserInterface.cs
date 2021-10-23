@@ -58,6 +58,7 @@ namespace Capstone
                 switch (userInput)
                 {
                     case "1":
+                        Console.Clear();
                         DisplayVenueMenu();
                         break;
                     case "q":
@@ -65,7 +66,9 @@ namespace Capstone
                         repeat = false;
                         break;
                     default:
+                        Console.Clear();
                         Console.WriteLine("Please select an option from the menu.");
+                        Console.WriteLine();
                         break;
                 }
             }
@@ -154,29 +157,19 @@ namespace Capstone
         /// </summary>
         public bool DisplaySpacesMenu(int venueId) // This venue id has been passed down for generations
         {
-            Dictionary<int, Space> spaces = spaceDAO.GetSpaces(Venue.Id);
+            Dictionary<int, Space> spaces = spaceDAO.GetSpaces(Venue);
 
             bool valid = false;
             while (!valid)
             {
-                
+
                 DisplaySpaceDetails(spaces);
                 Console.WriteLine();
                 string userInput = CLIHelper.GetString("What would you like to do?\n1) Reserve a Space\nR) Return to the Previous Screen\n").ToLower();
-
                 switch (userInput)
                 {
                     case "1":
-                        DateTime startDate = GetDate();
-                        int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
-                        int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
-                        ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
-                        if (spacesAvailable.Count < 1)
-                        {
-                            return false;
-                        }
-                        DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
-                        valid = DisplayReservationMenu(spaces, startDate, stayLength, numberOfAttendees);
+                        valid = DisplaySortedSpaces(spaces);
                         break;
                     case "r":
                         Console.Clear();
@@ -189,6 +182,18 @@ namespace Capstone
                 }
             }
             return true;
+        }
+
+        public bool DisplaySortedSpaces(Dictionary<int, Space> spaces)
+        {
+            bool valid;
+            DateTime startDate = GetDate();
+            int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
+            int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
+            ICollection<int> spacesAvailable = reservationDAO.GetReservations(Venue.Id, startDate, stayLength, numberOfAttendees);
+            DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
+            valid = DisplayReservationMenu(spaces, startDate, stayLength, numberOfAttendees);
+            return valid;
         }
 
         public void DisplaySpaceDetails(Dictionary<int, Space> spaces)
@@ -277,9 +282,12 @@ namespace Capstone
             Console.WriteLine(); DateTime departDate = startDate.AddDays(stayLength);
             string output = String.Format
             ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n{14,16}{15}",
-            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate.ToString("MM/dd/YYYY"), "Depart Date: ", departDate.ToString("MM/dd/YYYY"), "TotalCost: ", totalCost);
+            "Confirmation #: ", confirmationNumber, "Venue: ", venueName, "Space: ", spaceName, "Resrved For: ", reserverName, "Attendees: ", numberOfAttenddees, "Arrival Date: ", startDate.ToString("MM/dd/yyyy"), "Depart Date: ", departDate.ToString("MM/dd/yyyy"), "TotalCost: ", totalCost);
             Console.WriteLine(output);
+            Console.WriteLine();
+            Console.WriteLine("Press any key to continue (WARNING! This will remove the confirmation details)");
             Console.ReadKey();
+            Console.Clear();
         }
     }
 }

@@ -9,13 +9,14 @@ namespace Capstone.DAL
     public class ReservationDAO : IReservationDAO   
     {
         private const string SqlSelect =
-            "SELECT s.id " +
+            "SELECT s.id, r.start_date " +
             "FROM space s " +
             "WHERE s.venue_id = @venue_id " +
             "AND max_occupancy >= @number_of_attendees " +
             "AND NOT EXISTS(SELECT * FROM reservation r " +
             "WHERE r.space_id = s.id AND start_date >= @start_date AND end_date <= @end_date)";
 
+        
         private const string SqlCreateReservation =
             "INSERT INTO reservation(space_id, number_of_attendees, start_date, end_date, reserved_for) " +
             "VALUES(@space_id, @number_of_attendees, @start_date, @end_date, @reserved_for) " +
