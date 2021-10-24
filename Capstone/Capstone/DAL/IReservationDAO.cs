@@ -13,5 +13,6 @@ namespace Capstone.DAL
         public int ReserveSpace(int space_id, int numberOfAttendees, DateTime startDate, int stayLength, string reservationName);
 
         public ICollection<Reservation> GetNext30Days(int venueId);
+        public ICollection<Reservation> GetALLNext30Days();
     }
 }

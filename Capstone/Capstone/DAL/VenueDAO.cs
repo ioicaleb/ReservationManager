@@ -61,9 +61,9 @@ namespace Capstone.DAL
             return venues;
         }
 
-        public string GetCategory(int venueId)
+        public List<string> GetCategory(int venueId)
         {
-            string category = "";
+            List<string> category = new List<string>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -76,9 +76,8 @@ namespace Capstone.DAL
 
                 while (reader.Read())
                 {
-                    category += Convert.ToString(reader["name"]) + "| ";
+                    category.Add(Convert.ToString(reader["name"]));
                 }
-                category += " ";
             }
             return category;
         }

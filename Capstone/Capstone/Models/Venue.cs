@@ -13,7 +13,7 @@ namespace Capstone.Models
         public int CityId { get; set; }
         public string Address { get; set; }
         public string Description { get; set; }
-        public string Categories { get; set; }
+        public List<string> Categories { get; set; }
 
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Capstone.Models
         {
             return $"{Name}\n" +
                     $"Location: {Address}\n" +
-                    $"Categories: {Categories.Replace("|", ",").Replace(",  ", "")}\n\n" +
+                    $"Categories: {String.Join(", ", Categories)}\n\n" +
                     $"{Description}";
         }
 

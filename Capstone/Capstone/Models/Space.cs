@@ -30,9 +30,10 @@ namespace Capstone.Models
         public int MaxOccupancy { get; set; }
         public string VenueName { get; set; }
         public decimal TotalCost { get; set; }
+        public DateTime UpcomingReservation { get; set; }
 
         // Reveals list of spaces within the venue selected
-        
+
 
         public override string ToString()
         {
