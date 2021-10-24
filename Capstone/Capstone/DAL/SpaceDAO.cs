@@ -17,7 +17,7 @@ namespace Capstone.DAL
 
         private const string SqlSearch =
             "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
-                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy, " +
+                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id " +

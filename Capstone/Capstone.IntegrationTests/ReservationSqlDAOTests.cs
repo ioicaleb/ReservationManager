@@ -39,7 +39,7 @@ namespace Capstone.IntegrationTests
         }
 
         [TestMethod]
-        public void ReserveSpaceCreatesReservationIdIfSpaceIsAvailabel()
+        public void ReserveSpaceCreatesReservationIdIfSpaceIsAvailable()
         {
             // Arrange
             ReservationDAO reservationSqlDAO = new ReservationDAO(ConnectionString);
