@@ -15,7 +15,7 @@ namespace Capstone.DAL
             "AND (open_from <= @start_month AND open_to > @end_month " +
             "OR ISNULL(open_from, 0) = 0) " +
             "AND NOT EXISTS (SELECT * FROM reservation r " +
-            "WHERE r.space_id = s.id AND r.start_date > @end_date AND r.end_date < @start_date)"; // This completely checks that a persons reservation can not be encapsulated in or overlappint, or be encapsulated by antoher persons existing reserevation.
+            "WHERE r.space_id = s.id AND r.start_date <= @end_date AND r.end_date >= @start_date)"; // This completely checks that a persons reservation can not be encapsulated in or overlappint, or be encapsulated by antoher persons existing reserevation.
 
         private const string SqlCreateReservation =
             "INSERT INTO reservation(space_id, start_date, end_date, reserved_for) " +
