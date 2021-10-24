@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Capstone.Models
 {
+    /// <summary>
+    /// This class represents a single space, it has properties that will be set and pulled as well as specific format of being printed out.
+    /// </summary>
     public class Space
     {
         public int Id { get; set; }
@@ -32,8 +35,7 @@ namespace Capstone.Models
         public decimal TotalCost { get; set; }
         public DateTime UpcomingReservation { get; set; }
 
-        // Reveals list of spaces within the venue selected
-
+        // The default format for printing a space
         public override string ToString()
         {
             return String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5}",

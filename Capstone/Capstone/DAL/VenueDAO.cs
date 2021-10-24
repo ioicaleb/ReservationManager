@@ -7,23 +7,18 @@ using System.Text;
 namespace Capstone.DAL
 {
     /// <summary>
-    /// This class handles working with Venues in the database.
+    /// This class handles working with obtaining venues information from the database
     /// </summary>
     public class VenueDAO : IVenueDAO
     {
-        //<<<<<<< HEAD
+        // Query for GetVenues
         private const string SqlSelectVenues =
             "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
-            "FROM venue v INNER JOIN city c ON c.id = v.city_id ";
-            //"ORDER BY v.name";
+            "FROM venue v" +
+            " INNER JOIN city c ON c.id = v.city_id " +
+            "ORDER BY v.name";
 
-//=======
-        //private const string SqlSelect =
-        //    "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address, c.name AS categoryName " +
-        //    "FROM venue v " +
-        //    "INNER JOIN city c ON c.id = v.city_id";
-//>>>>>>> bf9b38ab2d138f795b46dca3d58df9f23d55ecf9
-
+        // Query for GetCategory
         private const string SqlSelectCategoryName =
             "SELECT c.name " +
             "FROM venue v INNER JOIN category_venue cv ON cv.venue_id = v.id INNER JOIN category c ON c.id = cv.category_id " +
@@ -36,9 +31,13 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public ICollection<Venue> GetVenues()
+        /// <summary>
+        /// Selects all of the venues from the database returned as a list
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, Venue> GetVenues()
         {
-            List<Venue> venues = new List<Venue>();
+            Dictionary<int, Venue> venues = new Dictionary<int, Venue>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -48,6 +47,7 @@ namespace Capstone.DAL
                     SqlCommand command = new SqlCommand(SqlSelectVenues, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
+                    int i = 1;
                     while (reader.Read())
                     {
                         Venue venue = new Venue
@@ -58,7 +58,8 @@ namespace Capstone.DAL
                             Description = Convert.ToString(reader["description"]),
                             Address = Convert.ToString(reader["address"])
                         };
-                        venues.Add(venue);
+                        venues[i] = venue;
+                        i++;
                     }
                 }
             }
@@ -67,14 +68,19 @@ namespace Capstone.DAL
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
 
-            foreach (Venue venue in venues)
+            foreach (KeyValuePair<int, Venue> venue in venues)
             {
-                venue.Categories = GetCategory(venue.Id);
+                venue.Value.Categories = GetCategory(venue.Value.Id);
             }
 
             return venues;
         }
 
+        /// <summary>
+        /// This class is currently used for testing purposes, returns a list of categories for a specific venue
+        /// </summary>
+        /// <param name="venueId"></param>
+        /// <returns></returns>
         public List<string> GetCategory(int venueId)
         {
             List<string> category = new List<string>();

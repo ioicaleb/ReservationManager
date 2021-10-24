@@ -5,8 +5,11 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    ///Interface implemented by VenueDAO
+    /// </summary>
     public interface IVenueDAO
     {
-        public ICollection<Venue> GetVenues();
+        public Dictionary<int, Venue> GetVenues();
     }
 }
