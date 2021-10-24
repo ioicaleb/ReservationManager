@@ -125,7 +125,7 @@ namespace Capstone
                 bool valid = false;
                 while (!valid)
                 {
-                    string userInput = CLIHelper.GetString("We're sorry, there are no available spaces based on the information you provided.\n  Y/N) Would you like to try another search?").ToLower();
+                    string userInput = CLIHelper.GetString("We're sorry, there are no available spaces based on the information you provided.\nWould you like to try another search? (Y/N): ").ToLower();
                     if (userInput == "y")
                     {
                         DisplayDesiredSpaces();
@@ -140,10 +140,10 @@ namespace Capstone
             }
             else
             {
-                bool repeat = true;
-                while (repeat)
+                bool leaveMenu = false;
+                while (!leaveMenu)
                 {
-                    repeat = DisplayReservationMenu(spaces, startDate, stayLength);
+                    leaveMenu = DisplayReservationMenu(spaces, startDate, stayLength);
                 }
             }
             
@@ -405,7 +405,7 @@ namespace Capstone
                     // Output the reservation confirmation information to the user on the screen including a confirmation number which represents a reservation ID.
                     PrintReservationConfirmation(Reservation);
                     Console.WriteLine();
-                    return false;
+                    return true;
                 }
                 else // The user's choice was < or > the available spaces...
                 {
@@ -413,7 +413,7 @@ namespace Capstone
                     Console.WriteLine();
                 }
             }
-            return true;
+            return false;
         }
 
         // Printing out all of the reservation confirmation details for user's records.
