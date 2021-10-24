@@ -108,7 +108,7 @@ namespace Capstone
             {
                 if (category == "None" || venue.Value.Categories.Contains(category))
                 {
-                    Venue = venue.Value; // Setting the class feild of reusable Venue to the each venue in the list as it loops. Not necessary as the Venue is not being returned or passed in.
+                    Venue = venue.Value;
                     Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(Venue, numberOfAttendees, startDate, stayLength, budget, needsAccessible);
 
                     if (spacesToAdd.Count() > 0) // Check that list is not empty
@@ -387,8 +387,8 @@ namespace Capstone
             bool valid = false;
             while (!valid)
             {
-                int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter 0 to cancel)?: ");
-                if (spaceChoice == 0)
+                int spaceChoice = CLIHelper.GetInteger("\nWhich space would you like to reserve (enter R to cancel)?: ");
+                if (spaceChoice == -1)
                 {
                     Console.Clear();
                     return false;

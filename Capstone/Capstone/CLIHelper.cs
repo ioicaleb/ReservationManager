@@ -37,29 +37,6 @@ namespace Capstone
             return intValue;
         }
 
-        public static double GetDouble(string message)
-        {
-            string userInput;
-            double doubleValue;
-            int numberOfAttempts = 0;
-
-            do
-            {
-                if (numberOfAttempts > 0)
-                {
-                    Console.WriteLine("Invalid input format. Please try again");
-                }
-
-                Console.Write(message + " ");
-                userInput = Console.ReadLine();
-                numberOfAttempts++;
-            }
-            while (!double.TryParse(userInput, out doubleValue));
-
-            Console.WriteLine();
-            return doubleValue;
-        }
-
         public static bool GetBool(string message)
         {
             string userInput;
@@ -124,13 +101,13 @@ namespace Capstone
                 string startDateInput = CLIHelper.GetString("When do you need the space? (MM/DD/YYYY) : ");
                 // Datetime parse
                 CultureInfo enUs = new CultureInfo("en-US");
-                if (DateTime.TryParseExact(startDateInput, "MM/dd/yyyy", enUs , DateTimeStyles.None, out startDate))
+                if (DateTime.TryParseExact(startDateInput, "MM/dd/yyyy", enUs , DateTimeStyles.None, out startDate) && startDate > DateTime.Now)
                 {
                     valid = true;
 
                     break;
                 }
-                Console.WriteLine("Invalid input, check format.");
+                Console.WriteLine("Invalid input, check format and that date has not passed and is not today.");
             }
             return startDate;
         }

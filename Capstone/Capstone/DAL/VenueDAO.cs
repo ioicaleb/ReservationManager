@@ -32,7 +32,8 @@ namespace Capstone.DAL
         }
 
         /// <summary>
-        /// Selects all of the venues from the database returned as a list
+        /// Selects all of the venues from the database returned as a dictionary of int, and venues.
+        /// This is so they can be stored alphabetically while keeping a sequential number sequence.
         /// </summary>
         /// <returns></returns>
         public Dictionary<int, Venue> GetVenues()
@@ -47,7 +48,7 @@ namespace Capstone.DAL
                     SqlCommand command = new SqlCommand(SqlSelectVenues, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
-                    int i = 1;
+                    int i = 1; // Starting the key off at at 1 and adding the next alphabetized venue from the reader.
                     while (reader.Read())
                     {
                         Venue venue = new Venue
@@ -58,7 +59,7 @@ namespace Capstone.DAL
                             Description = Convert.ToString(reader["description"]),
                             Address = Convert.ToString(reader["address"])
                         };
-                        venues[i] = venue;
+                        venues[i] = venue; // Representing key as an integer and assinging each venue to it in order.
                         i++;
                     }
                 }
@@ -67,7 +68,7 @@ namespace Capstone.DAL
             {
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
-
+            // Looping through
             foreach (KeyValuePair<int, Venue> venue in venues)
             {
                 venue.Value.Categories = GetCategory(venue.Value.Id);
