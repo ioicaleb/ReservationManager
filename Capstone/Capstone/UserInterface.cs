@@ -106,18 +106,21 @@ namespace Capstone
             Console.WriteLine("Here are the available spaces based on your requirements:");
             foreach (KeyValuePair<int, Venue> venue in venues) // Looping through list of venues so it can associate a specific venue when comparing a category filter to user's choice within DAO.
             {
-                Venue = venue.Value; // Setting the class feild of reusable Venue to the each venue in the list as it loops. Not necessary as the Venue is not being returned or passed in.
-                Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(Venue, numberOfAttendees, startDate, stayLength, category, budget, needsAccessible);
-                
-                if (spacesToAdd.Count() > 0) // Check that list is not empty
+                if (category == "None" || venue.Value.Categories.Contains(category))
                 {
-                    // Looping through the dictionary of spaces obtained based on user's requirements to...?
-                    foreach (KeyValuePair<int, Space> space in spacesToAdd)
+                    Venue = venue.Value; // Setting the class feild of reusable Venue to the each venue in the list as it loops. Not necessary as the Venue is not being returned or passed in.
+                    Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(Venue, numberOfAttendees, startDate, stayLength, budget, needsAccessible);
+
+                    if (spacesToAdd.Count() > 0) // Check that list is not empty
                     {
-                        spaces[space.Key] = space.Value;
+                        // Looping through the dictionary of spaces obtained based on user's requirements to...?
+                        foreach (KeyValuePair<int, Space> space in spacesToAdd)
+                        {
+                            spaces[space.Key] = space.Value;
+                        }
+                        DisplaySpaceDetails(spacesToAdd);
+                        Console.WriteLine();
                     }
-                    DisplaySpaceDetails(spacesToAdd);
-                    Console.WriteLine();
                 }
             }
             if (spaces.Count() == 0) // If the dictionary is empty, the user will be prompt to try another search or to the main menu
@@ -140,13 +143,10 @@ namespace Capstone
             }
             else
             {
-                bool leaveMenu = false;
-                while (!leaveMenu)
-                {
-                    leaveMenu = DisplayReservationMenu(spaces, startDate, stayLength);
-                }
+                DisplayReservationMenu(spaces, startDate, stayLength);
             }
-            
+
+
         }
 
 
@@ -156,7 +156,7 @@ namespace Capstone
         /// <returns></returns>
         public void DisplayVenueMenu()
         {
-            bool leaveMenu = false; 
+            bool leaveMenu = false;
             Dictionary<int, Venue> venues = venueDAO.GetVenues();
             while (!leaveMenu)
             {
@@ -287,7 +287,7 @@ namespace Capstone
             }
             return false;
         }
-        
+
         // This method is not used and isn't on readme, not sure what it is for atm :)
         public bool SearchReservationDetails()
         {
@@ -391,7 +391,7 @@ namespace Capstone
                 if (spaceChoice == 0)
                 {
                     Console.Clear();
-                    return false; // this will allow looping back through spaces menu by when setting valid set to false.
+                    return false;
                 }
                 // The number the user input must be a real space provided, if so, it will create a new reservation in that database.
                 else if (spaces.ContainsKey(spaceChoice))
