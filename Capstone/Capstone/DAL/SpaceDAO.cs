@@ -81,7 +81,7 @@ namespace Capstone.DAL
             return spaces;
         }
 
-        public Dictionary<int, Space> SearchSpaces(Venue venue, int numberOfAttendees, DateTime startDate, int stayLength, string category, int budget)
+        public Dictionary<int, Space> SearchSpaces(Venue venue, int numberOfAttendees, DateTime startDate, int stayLength, string category, int budget, bool needAccessible)
         {
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
             try
@@ -123,9 +123,12 @@ namespace Capstone.DAL
                         {
                             if (category == "None" || venue.Categories.Contains(category))
                             {
-                                if(space.OpenDate <= desiredMonth && space.CloseDate >= desiredMonth)
+                                if (space.OpenDate <= desiredMonth && space.CloseDate >= desiredMonth)
                                 {
-                                    spaces[space.Id] = space;
+                                    if ((needAccessible && space.IsAccessible) || (!needAccessible))
+                                    {
+                                        spaces[space.Id] = space;
+                                    }
                                 }
                             }
                         }
