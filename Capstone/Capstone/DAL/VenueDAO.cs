@@ -11,10 +11,18 @@ namespace Capstone.DAL
     /// </summary>
     public class VenueDAO : IVenueDAO
     {
-        private const string SqlSelect =
-            "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address, c.name AS categoryName " +
-            "FROM venue v " +
-            "INNER JOIN city c ON c.id = v.city_id";
+        //<<<<<<< HEAD
+        private const string SqlSelectVenues =
+            "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
+            "FROM venue v INNER JOIN city c ON c.id = v.city_id ";
+            //"ORDER BY v.name";
+
+//=======
+        //private const string SqlSelect =
+        //    "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address, c.name AS categoryName " +
+        //    "FROM venue v " +
+        //    "INNER JOIN city c ON c.id = v.city_id";
+//>>>>>>> bf9b38ab2d138f795b46dca3d58df9f23d55ecf9
 
         private const string SqlSelectCategoryName =
             "SELECT c.name " +
@@ -37,7 +45,7 @@ namespace Capstone.DAL
                 {
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlSelect, conn);
+                    SqlCommand command = new SqlCommand(SqlSelectVenues, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())

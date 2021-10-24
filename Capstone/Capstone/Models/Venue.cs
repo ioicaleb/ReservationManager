@@ -23,8 +23,9 @@ namespace Capstone.Models
         /// <param name="venueId"></param>
         public Venue GetSelectedVenue(int venueId, ICollection<Venue> venues) // Takes in the venueId which is parsed num input representing id of venue
         {
-            // Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
-            Venue[] venuesArr = venues.ToArray(); // To obtain values by index.
+            //Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
+            Venue[] venuesArr = venues.ToArray();
+            
 
             Venue currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
 

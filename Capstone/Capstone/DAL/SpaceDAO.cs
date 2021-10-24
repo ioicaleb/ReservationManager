@@ -81,6 +81,17 @@ namespace Capstone.DAL
             return spaces;
         }
 
+        /// <summary>
+        /// Gathers each space obtained by the query as a value, setting each value = to a space which correlates with the key.
+        /// The dictionary key is represented by the corresponding space ID.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <param name="numberOfAttendees"></param>
+        /// <param name="startDate"></param>
+        /// <param name="stayLength"></param>
+        /// <param name="category"></param>
+        /// <param name="budget"></param>
+        /// <returns></returns>
         public Dictionary<int, Space> SearchSpaces(Venue venue, int numberOfAttendees, DateTime startDate, int stayLength, string category, int budget, bool needAccessible)
         {
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
