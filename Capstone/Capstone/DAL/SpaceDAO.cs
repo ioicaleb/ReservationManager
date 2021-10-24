@@ -8,7 +8,7 @@ namespace Capstone.DAL
 {
     public class SpaceDAO : ISpaceDAO
     {
-        private const string SqlSelect =
+        private const string SqlSelectSpacesForVenue =
             "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
                 "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
@@ -32,6 +32,11 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// A new dictionary of Key: Space ID and Value: Space, created by obtaining all spaces from a selected venue.
+        /// </summary>
+        /// <param name="venueId"></param>
+        /// <returns></returns>
         public Dictionary<int, Space> GetSpaces(Venue venue)
         {
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
@@ -41,7 +46,7 @@ namespace Capstone.DAL
                 {
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlSelect, conn);
+                    SqlCommand command = new SqlCommand(SqlSelectSpacesForVenue, conn);
                     command.Parameters.AddWithValue("@venue_id", venue.Id);
 
                     SqlDataReader reader = command.ExecuteReader();
@@ -64,6 +69,7 @@ namespace Capstone.DAL
                         space.OpenMonth = ChangeIntToMonthAbbr(space.OpenDate);
                         space.CloseMonth = ChangeIntToMonthAbbr(space.CloseDate);
 
+                        // Collects the actual id from the space as a key, and the entire space will be stored as it's value.
                         spaces[space.Id] = space;
                     }
                 }
@@ -105,13 +111,17 @@ namespace Capstone.DAL
                             CloseDate = Convert.ToInt32(reader["open_to"]),
                             MaxOccupancy = Convert.ToInt32(reader["max_occupancy"])
                         };
+
+                        space.OpenMonth = ChangeIntToMonthAbbr(space.OpenDate);
+                        space.CloseMonth = ChangeIntToMonthAbbr(space.CloseDate);
+
                         space.TotalCost = space.DailyRate * stayLength;
 
                         int desiredMonth = int.Parse(startDate.ToString("MM"));
 
                         if (space.TotalCost <= budget)
                         {
-                            if (category == "N" || venue.Categories.Contains(category))
+                            if (category == "None" || venue.Categories.Contains(category))
                             {
                                 if(space.OpenDate <= desiredMonth && space.CloseDate >= desiredMonth)
                                 {

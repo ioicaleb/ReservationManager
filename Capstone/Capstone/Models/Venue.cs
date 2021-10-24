@@ -17,7 +17,8 @@ namespace Capstone.Models
 
 
         /// <summary>
-        /// Displaying details of the venue itself with some a submenu options
+        /// Takes in user input for venue choice and a list of venues, converts list to array.
+        /// Uses the user input to pick desired venue from array by index.
         /// </summary>
         /// <param name="venueId"></param>
         public Venue GetSelectedVenue(int venueId, ICollection<Venue> venues) // Takes in the venueId which is parsed num input representing id of venue

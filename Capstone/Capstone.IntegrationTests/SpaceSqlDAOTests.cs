@@ -62,7 +62,7 @@ namespace Capstone.IntegrationTests
             DateTime date = DateTime.Parse("2021/07/07");
 
             // Act
-            spaces = spaceDAO.SearchSpaces(venue, 30, date, 5, "N", 100000000);
+            spaces = spaceDAO.SearchSpaces(venue, 30, date, 5, "None", 100000000);
 
             // Assert
             Assert.IsNotNull(spaces);

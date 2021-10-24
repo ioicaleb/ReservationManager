@@ -7,8 +7,11 @@ namespace Capstone.DAL
 {
     public interface IReservationDAO
     {
-        public List<int> GetAvailableSpaces(int venueId, DateTime startDate, int stayLength, int numberOfAttendees);
+        public List<int> GetAvailableSpaces(int venueId, DateTime startDate, int stayLength);
 
-        public int ReserveSpace(int space_id, int numberOfAttendees, DateTime startDate, int stayLength, string reservationName);
+        public int ReserveSpace(Reservation reservation);
+
+        public ICollection<Reservation> GetUpcomingReservations(int venueId);
+        public Reservation SearchReservation(int reservationId);
     }
 }

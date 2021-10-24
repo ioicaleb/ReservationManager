@@ -15,7 +15,7 @@ SET IDENTITY_INSERT venue OFF
 SET IDENTITY_INSERT space ON
 INSERT INTO space (id, venue_id, name, is_accessible, open_from, open_to, daily_rate, max_occupancy)
 VALUES (1, 1, 'OpenTest', 1, NULL, NULL, 1.00, 5),
-	   (2, 1, 'RestrictedTest', 0, 05, 09, 100.00, 100);
+	   (2, 1, 'RestrictedTest', 0, 5, 9, 100.00, 100);
 SET IDENTITY_INSERT space OFF
 
 SET IDENTITY_INSERT reservation ON
