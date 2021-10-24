@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Capstone
@@ -31,7 +32,7 @@ namespace Capstone
                     return -1;
                 }
             }
-            while (!int.TryParse(userInput, out intValue) && intValue > 0);
+            while (!int.TryParse(userInput, out intValue) || intValue < 1);
             Console.WriteLine();
             return intValue;
         }
@@ -97,9 +98,9 @@ namespace Capstone
             DateTime startDate = new DateTime();
             while (!valid)
             {
+                CultureInfo enUs = new CultureInfo("en-US");
                 string startDateInput = CLIHelper.GetString("When do you need the space? (YYYY/MM/DD) : ");
-                // Datetime parse
-                if (DateTime.TryParse(startDateInput, out startDate))
+                if (DateTime.TryParseExact(startDateInput, "MM/dd/yyyy", enUs, DateTimeStyles.None, out startDate))
                 {
                     valid = true;
 

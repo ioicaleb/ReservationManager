@@ -391,7 +391,7 @@ namespace Capstone
                 if (spaceChoice == 0)
                 {
                     Console.Clear();
-                    return false; // this will allow looping back through spaces menu by when setting valid set to false.
+                    return true; // this will allow looping back through spaces menu by when setting valid set to false.
                 }
                 // The number the user input must be a real space provided, if so, it will create a new reservation in that database.
                 else if (spaces.ContainsKey(spaceChoice))
