@@ -9,7 +9,7 @@ namespace Capstone.DAL
     public class SpaceDAO : ISpaceDAO
     {
         private const string SqlSelectSpacesForVenue =
-            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 13) AS open_from, " +
+            "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
                 "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
@@ -17,7 +17,7 @@ namespace Capstone.DAL
 
         private const string SqlSearch =
             "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
-                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy, " +
+                "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id " +
@@ -81,6 +81,17 @@ namespace Capstone.DAL
             return spaces;
         }
 
+        /// <summary>
+        /// Gathers each space obtained by the query as a value, setting each value = to a space which correlates with the key.
+        /// The dictionary key is represented by the corresponding space ID.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <param name="numberOfAttendees"></param>
+        /// <param name="startDate"></param>
+        /// <param name="stayLength"></param>
+        /// <param name="category"></param>
+        /// <param name="budget"></param>
+        /// <returns></returns>
         public Dictionary<int, Space> SearchSpaces(Venue venue, int numberOfAttendees, DateTime startDate, int stayLength, string category, int budget)
         {
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
@@ -111,13 +122,17 @@ namespace Capstone.DAL
                             CloseDate = Convert.ToInt32(reader["open_to"]),
                             MaxOccupancy = Convert.ToInt32(reader["max_occupancy"])
                         };
+
+                        space.OpenMonth = ChangeIntToMonthAbbr(space.OpenDate);
+                        space.CloseMonth = ChangeIntToMonthAbbr(space.CloseDate);
+
                         space.TotalCost = space.DailyRate * stayLength;
 
                         int desiredMonth = int.Parse(startDate.ToString("MM"));
 
                         if (space.TotalCost <= budget)
                         {
-                            if (category == "N" || venue.Categories.Contains(category))
+                            if (category == "None" || venue.Categories.Contains(category))
                             {
                                 if(space.OpenDate <= desiredMonth && space.CloseDate >= desiredMonth)
                                 {

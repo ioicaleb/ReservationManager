@@ -7,6 +7,6 @@ namespace Capstone.DAL
 {
     public interface IVenueDAO
     {
-        public Dictionary<int, Venue> GetVenues();
+        public ICollection<Venue> GetVenues();
     }
 }

@@ -104,32 +104,25 @@ namespace Capstone
             return userInput;
         }
 
-        public static string GetIntOrR(string message)
+        public static DateTime GetDate()
         {
-            string userInput;
-            int intValue;
-            int numberOfAttempts = 0;
-
-            do
+            bool valid = false;
+            Console.Clear();
+            // Search for reservations available based on the needs of the customer
+            DateTime startDate = new DateTime();
+            while (!valid)
             {
-                if (numberOfAttempts > 0)
+                string startDateInput = CLIHelper.GetString("When do you need the space? (YYYY/MM/DD) : ");
+                // Datetime parse
+                if (DateTime.TryParse(startDateInput, out startDate))
                 {
-                    Console.WriteLine("Invalid input format. Please try again");
+                    valid = true;
+
+                    break;
                 }
-
-                Console.Write(message + " ");
-                userInput = Console.ReadLine();
-                numberOfAttempts++;
-
+                Console.WriteLine("Invalid input, check format.");
             }
-            while (!int.TryParse(userInput, out intValue) && userInput != "r");
-
-            if (userInput == "r")
-            {
-                // Here is where it goes to previous menu.
-            }
-            string input = Convert.ToString(intValue);
-            return input;
+            return startDate;
         }
     }
 }

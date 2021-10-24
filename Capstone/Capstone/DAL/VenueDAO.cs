@@ -11,11 +11,18 @@ namespace Capstone.DAL
     /// </summary>
     public class VenueDAO : IVenueDAO
     {
+//<<<<<<< HEAD
         private const string SqlSelectVenues =
             "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
             "FROM venue v INNER JOIN city c ON c.id = v.city_id " +
             "ORDER BY v.name";
 
+//=======
+        //private const string SqlSelect =
+        //    "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address, c.name AS categoryName " +
+        //    "FROM venue v " +
+        //    "INNER JOIN city c ON c.id = v.city_id";
+//>>>>>>> bf9b38ab2d138f795b46dca3d58df9f23d55ecf9
 
         private const string SqlSelectCategoryName =
             "SELECT c.name " +
@@ -29,9 +36,9 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public Dictionary<int, Venue> GetVenues()
+        public ICollection<Venue> GetVenues()
         {
-            Dictionary<int, Venue> venues = new Dictionary<int, Venue>();
+            List<Venue> venues = new List<Venue>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -41,47 +48,56 @@ namespace Capstone.DAL
                     SqlCommand command = new SqlCommand(SqlSelectVenues, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
-                    int venueNum = 1;
                     while (reader.Read())
                     {
-                        Venue venue = new Venue();
-                        venue.Id = Convert.ToInt32(reader["id"]);
-                        venue.Name = Convert.ToString(reader["name"]);
-                        venue.CityId = Convert.ToInt32(reader["city_id"]);
-                        venue.Description = Convert.ToString(reader["description"]);
-                        venue.Address = Convert.ToString(reader["address"]);
-                        venue.Categories = GetCategory(venue.Id);
-                        venues[venueNum] = venue;
-                        venueNum++;
-                    };
-
+                        Venue venue = new Venue
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            Name = Convert.ToString(reader["name"]),
+                            CityId = Convert.ToInt32(reader["city_id"]),
+                            Description = Convert.ToString(reader["description"]),
+                            Address = Convert.ToString(reader["address"])
+                        };
+                        venues.Add(venue);
+                    }
                 }
             }
-
             catch (SqlException ex)
             {
                 Console.WriteLine("Problem querying the database: " + ex.Message);
             }
+
+            foreach (Venue venue in venues)
+            {
+                venue.Categories = GetCategory(venue.Id);
+            }
+
             return venues;
         }
 
         public List<string> GetCategory(int venueId)
         {
             List<string> category = new List<string>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            try
             {
-                conn.Open();
-                List<string> categories = new List<string>();
-
-                SqlCommand command = new SqlCommand(SqlSelectCategoryName, conn);
-                command.Parameters.AddWithValue("@id", venueId);
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    category.Add(Convert.ToString(reader["name"]));
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSelectCategoryName, conn);
+                    command.Parameters.AddWithValue("@id", venueId);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        category.Add(Convert.ToString(reader["name"]));
+                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Problem querying the database: " + ex.Message);
             }
             return category;
         }
