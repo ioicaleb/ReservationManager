@@ -11,9 +11,11 @@ namespace Capstone.DAL
     /// </summary>
     public class VenueDAO : IVenueDAO
     {
-        private const string SqlSelect =
+        private const string SqlSelectVenues =
             "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
-            "FROM venue v INNER JOIN city c ON c.id = v.city_id";
+            "FROM venue v INNER JOIN city c ON c.id = v.city_id " +
+            "ORDER BY v.name";
+
 
         private const string SqlSelectCategoryName =
             "SELECT c.name " +
@@ -27,18 +29,19 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public ICollection<Venue> GetVenues()
+        public Dictionary<int, Venue> GetVenues()
         {
-            List<Venue> venues = new List<Venue>();
+            Dictionary<int, Venue> venues = new Dictionary<int, Venue>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SqlSelect, conn);
+                    SqlCommand command = new SqlCommand(SqlSelectVenues, conn);
 
                     SqlDataReader reader = command.ExecuteReader();
+                    int venueNum = 1;
                     while (reader.Read())
                     {
                         Venue venue = new Venue();
@@ -48,7 +51,8 @@ namespace Capstone.DAL
                         venue.Description = Convert.ToString(reader["description"]);
                         venue.Address = Convert.ToString(reader["address"]);
                         venue.Categories = GetCategory(venue.Id);
-                        venues.Add(venue);
+                        venues[venueNum] = venue;
+                        venueNum++;
                     };
 
                 }
