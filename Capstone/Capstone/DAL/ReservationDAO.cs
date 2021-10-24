@@ -32,9 +32,11 @@ namespace Capstone.DAL
             "ORDER BY start_date ";
 
         private const string SqlSearchReservation =
-           "SELECT * " +
-           "FROM reservation " +
-           "WHERE reservation_id = @id";
+           "SELECT r.*, s.name AS space_name, v.name AS venue_name " +
+           "FROM reservation r " +
+                "INNER JOIN space s ON s.id = r.space_id " +
+                "INNER JOIN venue v ON v.id = s.venue_id " +
+           "WHERE r.reservation_id = @reservation_id";
 
         private readonly string connectionString;
 
@@ -155,7 +157,7 @@ namespace Capstone.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlSearchReservation, conn);
-                    command.Parameters.AddWithValue("@reservationId", reservationId);
+                    command.Parameters.AddWithValue("@reservation_Id", reservationId);
 
                     SqlDataReader reader = command.ExecuteReader();
 

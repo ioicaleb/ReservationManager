@@ -55,7 +55,7 @@ namespace Capstone
             while (repeat)
             {
                 // Main Menu Inquiry takes in user response as a string and returns it into userInput.
-                string userInput = CLIHelper.GetString("What would you like to do?:\n   1) List Venues\n   2) Search for a Space\n   Q) Quit\n").ToLower();
+                string userInput = CLIHelper.GetString("What would you like to do?:\n   1) List Venues\n   2) Search for a Space\n   3) Search for an existing reservation\n   Q) Quit\n").ToLower();
 
                 // Switch user input from main menu selction
                 switch (userInput)
@@ -68,6 +68,9 @@ namespace Capstone
                     case "2":
                         DisplayDesiredSpaces();
                         Console.Clear();
+                        break;
+                    case "3":
+                        SearchReservationDetails();
                         break;
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
@@ -237,7 +240,7 @@ namespace Capstone
                 Console.WriteLine();
                 valid = HandleSpaceMenu(spaces);
             }
-            return true;
+            return false;
         }
 
         public bool HandleSpaceMenu(Dictionary<int, Space> spaces)
@@ -370,7 +373,9 @@ namespace Capstone
                 else if (spaces.ContainsKey(spaceChoice))
                 {
                     Space = spaces[spaceChoice];
-                    Reservation = Reservation.GetReservationDetails(Space, startDate, stayLength);
+
+                    string reserver = CLIHelper.GetString("Who is this reservation for?: ");
+                    Reservation = Reservation.GetReservationDetails(Space, startDate, stayLength, reserver);
                     int confirmationNumber = reservationDAO.ReserveSpace(Reservation);
                     Reservation.Id = confirmationNumber;
                     // Output the reservation confirmation information to the user on the screen including a confirmation number which represents a reservation ID.

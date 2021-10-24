@@ -16,10 +16,8 @@ namespace Capstone.Models
         public int NumberOfAttendees { get; set; }
         public string TotalCost { get; set; }
 
-        public Reservation GetReservationDetails(Space space, DateTime startDate, int stayLength)
+        public Reservation GetReservationDetails(Space space, DateTime startDate, int stayLength, string reserver)
         {
-            string reserver = CLIHelper.GetString("Who is this reservation for?: ");
-
             Reservation reservation = new Reservation
             {
                 SpaceName = space.Name,
