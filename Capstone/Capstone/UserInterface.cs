@@ -129,6 +129,7 @@ namespace Capstone
                     if (userInput == "y")
                     {
                         DisplayDesiredSpaces();
+                        valid = true;
                     }
                     else
                     {
@@ -171,7 +172,7 @@ namespace Capstone
                     leaveMenu = true;
                 }
                 // User has chosen a number to large or small to select a proper venue, takes them back through the loop.
-                else if (userInt >= venues.Count() || userInt <= 0)
+                else if (userInt > venues.Count() || userInt <= 0)
                 {
                     Console.Clear();
                     Console.WriteLine("Invalid input. Venue not available");
@@ -284,7 +285,7 @@ namespace Capstone
                     Console.WriteLine();
                     break;
             }
-            return true;
+            return false;
         }
         
         // This method is not used and isn't on readme, not sure what it is for atm :)

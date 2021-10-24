@@ -31,32 +31,9 @@ namespace Capstone
                     return -1;
                 }
             }
-            while (!int.TryParse(userInput, out intValue));
+            while (!int.TryParse(userInput, out intValue) && intValue > 0);
             Console.WriteLine();
             return intValue;
-        }
-
-        public static double GetDouble(string message)
-        {
-            string userInput;
-            double doubleValue;
-            int numberOfAttempts = 0;
-
-            do
-            {
-                if (numberOfAttempts > 0)
-                {
-                    Console.WriteLine("Invalid input format. Please try again");
-                }
-
-                Console.Write(message + " ");
-                userInput = Console.ReadLine();
-                numberOfAttempts++;
-            }
-            while (!double.TryParse(userInput, out doubleValue));
-
-            Console.WriteLine();
-            return doubleValue;
         }
 
         public static bool GetBool(string message)
