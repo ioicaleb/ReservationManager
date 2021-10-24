@@ -26,7 +26,7 @@ namespace Capstone.Models
             // Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
             Venue[] venuesArr = venues.ToArray(); // To obtain values by index.
 
-            Venue  currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
+            Venue currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
 
             return currVenue;
         }

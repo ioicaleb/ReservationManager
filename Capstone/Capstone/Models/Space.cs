@@ -34,7 +34,6 @@ namespace Capstone.Models
 
         // Reveals list of spaces within the venue selected
 
-
         public override string ToString()
         {
             return String.Format("{0,-10}{1,-33}{2,-13}{3,-12}{4,-13}{5}",
