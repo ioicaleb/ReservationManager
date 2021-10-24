@@ -12,8 +12,8 @@ namespace Capstone.DAL
             "SELECT id " +
             "FROM space s " +
             "WHERE venue_id = @venue_id " +
-            "AND open_from <= @start_month AND open_to > @end_month " +
-            "OR ISNULL(open_from, 0) = 0 " +
+            "AND (open_from <= @start_month AND open_to > @end_month " +
+            "OR ISNULL(open_from, 0) = 0) " +
             "AND NOT EXISTS (SELECT * FROM reservation r " +
             "WHERE r.space_id = s.id AND r.start_date > @end_date AND r.end_date < @start_date)"; // This completely checks that a persons reservation can not be encapsulated in or overlappint, or be encapsulated by antoher persons existing reserevation.
 

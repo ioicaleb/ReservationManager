@@ -11,11 +11,11 @@ namespace Capstone.DAL
     /// </summary>
     public class VenueDAO : IVenueDAO
     {
-//<<<<<<< HEAD
+        //<<<<<<< HEAD
         private const string SqlSelectVenues =
             "SELECT v.id, v.name, v.city_id, v.description, c.name + ', ' + c.state_abbreviation AS address " +
-            "FROM venue v INNER JOIN city c ON c.id = v.city_id " +
-            "ORDER BY v.name";
+            "FROM venue v INNER JOIN city c ON c.id = v.city_id ";
+            //"ORDER BY v.name";
 
 //=======
         //private const string SqlSelect =

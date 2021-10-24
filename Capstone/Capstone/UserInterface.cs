@@ -63,9 +63,11 @@ namespace Capstone
                     case "1":
                         Console.Clear();
                         DisplayVenueMenu();
+                        Console.Clear();
                         break;
                     case "2":
                         DisplayDesiredSpaces();
+                        Console.Clear();
                         break;
                     case "q":
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
@@ -87,9 +89,11 @@ namespace Capstone
         {
             // Retrieves all venues and gathers user input to filter search.
             ICollection<Venue> venues = venueDAO.GetVenues();
+
             DateTime startDate = CLIHelper.GetDate();
             int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
             int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
+            bool needsAccessible = CLIHelper.GetBool("Does the space require accessibility accommodations (Y/N)?: ");
             string categoryList = String.Format("{0,4}{1}\n{2,4}{3}\n{4,4}{5}\n{6,4}{7}\n{8,4}{9}\n{10,4}{11}\n{12,4}{13}\n", "1)", "Family Friendly", "2)", "Outdoors", "3)", "Historic", "4)", "Rustic",
                 "5)", "Luxury", "6)", "Modern", "7)", "None");
             int categoryIndex = CLIHelper.GetInteger("Which of the categories would you like to include?\n" + categoryList);
@@ -97,24 +101,24 @@ namespace Capstone
             // A new category is obtained by pulling from an array, representing a category in the list of options, selected by user.
             string category = categories[categoryIndex - 1];
             int budget = CLIHelper.GetInteger("What is your budget?: ");
-            Dictionary<int, Space> spaces = new Dictionary<int, Space>();
-            foreach (Venue venue in venues)
+            //Dictionary<int, Space> spaces = new Dictionary<int, Space>();
+            Console.WriteLine("Here are the available spaces based on your requirements:");
+            foreach (Venue venue in venues) // Looping through list of venues so it can associate a specific venue when comparing a category filter to user's choice within DAO.
             {
                 //Venue = venue; // Setting the class feild of reusable Venue to the each venue in the list as it loops. Not necessary as the Venue is not being returned or passed in.
-                Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(venue, numberOfAttendees, startDate, stayLength, category, budget);
+                Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(venue, numberOfAttendees, startDate, stayLength, category, budget, needsAccessible);
                 
                 if (spacesToAdd.Count() > 0) // Check that list is not empty
                 {
-                    Console.WriteLine("Here are the available spaces based on your requirements:");
-                    foreach (KeyValuePair<int, Space> space in spacesToAdd)
-                    {
-                        spaces[space.Key] = space.Value;
-                    }
+                    // Looping through the dictionary of spaces obtained based on user's requirements to...?
+                    //foreach (KeyValuePair<int, Space> space in spacesToAdd)
+                    //{
+                    //    spaces[space.Key] = space.Value;
+                    //}
                     DisplaySpaceDetails(spacesToAdd);
                     Console.WriteLine();
                 }
-                // If the list of spaces is empty, the user will be prompt to try another search or to return to the main menu.
-                else if (spacesToAdd.Count() == 0)
+                else if (spacesToAdd.Count() == 0) // If the dictionary is empty, the user will be prompt to try another search or to the main menu.
                 {
                  bool valid = false;
                     while (!valid)
@@ -132,26 +136,24 @@ namespace Capstone
                     }
                 }
             }
-            DisplaySpacesMenu(spaces);
         }
 
         /// <summary>
-        /// Displays a list of venues for user to select from. Provides menu options for user selection.
+        /// Displays a list of all venues for user to select from. Provides menu options for user selection.
         /// </summary>
         /// <returns></returns>
         public bool DisplayVenueMenu()
         {
-            bool leaveMenu = false;
-            // A list of venues generated from SQL query.
+            bool leaveMenu = false; 
             ICollection<Venue> venues = venueDAO.GetVenues();
             while (!leaveMenu)
             {
                 // Loops through the collection to print details of each venue for selectable options.
                 DisplayAllVenues(venues);
 
-                int userInt = CLIHelper.GetInteger("Which select a menu option: "); //Normal user input, Sets to -1 if user selects R
+                int userInt = CLIHelper.GetInteger("Which select a menu option: ");
 
-                // -1 represents "r", user has chosen to return to the main menu.
+                // -1 represents "r", meaning user has chosen to return to the main menu.
                 if (userInt == -1)
                 {
                     Console.Clear();
@@ -171,7 +173,7 @@ namespace Capstone
                     Console.Clear();
                     // Venue now represents the user's chosen venue
                     Venue = Venue.GetSelectedVenue(userInt, venues);
-                    leaveMenu = DisplayVenueSubMenu();
+                    leaveMenu = DisplayVenueSubMenu(); // A bool which will be used to determine whether or not this menu can be left or restarted based on output of method.
                 }
             }
             return false;
@@ -184,13 +186,11 @@ namespace Capstone
         /// <param name="venues"></param>
         public void DisplayAllVenues(ICollection<Venue> venues)
         {
-            int num = 1;
             Console.WriteLine($"Which venue would you like to view?");
             // Loop through the list of venues to display them to the user
             foreach (Venue venue in venues)
             {
-                Console.WriteLine(String.Format("{0,7}{0,7}{1}", $"{num},{venue.Id}) ", venue.Name));
-                num++;
+                Console.WriteLine(String.Format("{0,7}{1}", $"{venue.Id}) ", venue.Name));
             }
             Console.WriteLine(String.Format("{0,7}{1}", "R) ", "Return to previous Screen"));
             Console.WriteLine();
@@ -252,25 +252,37 @@ namespace Capstone
                 // Loops through a dictionary to print each space in venue.
                 DisplaySpaceDetails(spaces);
                 Console.WriteLine();
-                string userInput = CLIHelper.GetString("What would you like to do?\n1) Reserve a Space\nR) Return to the Previous Screen\n").ToLower();
-                switch (userInput)
-                {
-                    case "1":
-                        valid = DisplaySortedSpaces(spaces);
-                        break;
-                    case "r":
-                        Console.Clear();
-                        return false;
-                    default:
-                        Console.Clear();
-                        Console.WriteLine("Invalid Input");
-                        Console.WriteLine();
-                        break;
-                }
+                valid = HandleSpaceMenu(spaces);
             }
             return true;
         }
 
+        /// <summary>
+        /// Manages the spaces menu. Collects information and gets available spaces based on user input parameters.
+        /// </summary>
+        /// <param name="spaces"></param>
+        /// <returns></returns>
+        public bool HandleSpaceMenu(Dictionary<int, Space> spaces)
+        {
+            string userInput = CLIHelper.GetString("What would you like to do?\n    1) Reserve a Space\n    R) Return to the Previous Screen\n").ToLower();
+            switch (userInput)
+            {
+                case "1":
+                    DateTime startDate = CLIHelper.GetDate();
+                    int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
+                    ICollection<int> spacesAvailable = reservationDAO.GetAvailableSpaces(Venue.Id, startDate, stayLength);
+                    return DisplaySortedSpaces(spaces, spacesAvailable, startDate, stayLength);
+                case "r":
+                    Console.Clear();
+                    return true;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Invalid Input");
+                    Console.WriteLine();
+                    break;
+            }
+            return false;
+        }
         /// <summary>
         /// Allows user to search for a list of upcoming reservations based on which venue they are in.
         /// </summary>
@@ -310,21 +322,28 @@ namespace Capstone
         /// Displays a list of all spaces from a specific venue for user to choose from.
         /// </summary>
         /// <param name="spaces"></param>
-        public bool DisplaySortedSpaces(Dictionary<int, Space> spaces)
+        public bool DisplaySortedSpaces(Dictionary<int,Space> spaces, ICollection<int> spacesAvailable, DateTime startDate, int stayLength)
         {
             bool valid;
-            DateTime startDate = CLIHelper.GetDate();
-            int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
-            ICollection<int> spacesAvailable = reservationDAO.GetAvailableSpaces(Venue.Id, startDate, stayLength);
+            // If no spaces are available based on user input, ask user to serach again.
+            if (spacesAvailable.Count < 1)
+            {
+                Console.WriteLine("------NO SPACES AVAILABLE------");
+                Console.WriteLine();
+                return true;
+            }
             DisplayAvailableSpaces(stayLength, spaces, spacesAvailable);
             valid = DisplayReservationMenu(spaces, startDate, stayLength);
             return valid;
         }
 
+        /// <summary>
+        /// Displays the details of the dictionary to console screen.
+        /// </summary>
+        /// <param name="spaces"></param>
         public void DisplaySpaceDetails(Dictionary<int, Space> spaces)
         {
-            // This will need changed to a better format of spacing
-            Console.WriteLine($"{Venue.Name} spaces"); // Need to pull name from venue
+            Console.WriteLine($"{Venue.Name} spaces");
             Console.WriteLine(String.Format("{0,4}{1,-33}{2,-9}{3,-9}{4,-13}{5}", "", "Name", "Open", "Close", "Daily Rate", "Max. Occupancy"));
             foreach (KeyValuePair<int, Space> space in spaces)
             {
@@ -372,7 +391,7 @@ namespace Capstone
                 if (spaceChoice == 0)
                 {
                     Console.Clear();
-                    return false; // this will allow looping back through spaces menu by keeping valid set to false.
+                    return false; // this will allow looping back through spaces menu by when setting valid set to false.
                 }
                 // The number the user input must be a real space provided, if so, it will create a new reservation in that database.
                 else if (spaces.ContainsKey(spaceChoice))
@@ -401,7 +420,7 @@ namespace Capstone
             Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below: ");
             Console.WriteLine();
             string output = String.Format
-            ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n{14,16}{15}",
+            ("{0,16}{1}\n{2,16}{3}\n{4,16}{5}\n{6,16}{7}\n{8,16}{9}\n{10,16}{11}\n{12,16}{13}\n",
             "Confirmation #: ", Reservation.Id, "Venue: ", Reservation.VenueName, "Space: ", Reservation.SpaceName, "Reserved For: ", Reservation.ReservedBy, "Arrival Date: ",
                 Reservation.StartDate.ToString("MM/dd/yyyy"), "Depart Date: ", Reservation.EndDate.ToString("MM/dd/yyyy"), "TotalCost: ", Reservation.TotalCost);
             Console.WriteLine(output);

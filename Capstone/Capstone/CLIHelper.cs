@@ -75,6 +75,14 @@ namespace Capstone
                 Console.Write(message + " ");
                 userInput = Console.ReadLine();
                 numberOfAttempts++;
+                if (userInput.ToLower() == "y" || userInput.ToLower() == "yes")
+                {
+                    userInput = "true";
+                }
+                else
+                {
+                    userInput = "false";
+                }
             }
             while (!bool.TryParse(userInput, out boolValue));
 
