@@ -55,8 +55,7 @@ namespace Capstone
             while (repeat)
             {
                 // Main Menu Inquiry takes in user response as a string and returns it into userInput.
-                string userInput = CLIHelper.GetString("What would you like to do?:\n   1) List Venues\n   2) Search for a Space\n   3) Search for an existing reservation\n   Q) Quit\n").ToLower();
-
+                string userInput = CLIHelper.GetString("What would you like to do?:\n   1) List Venues\n   2) Search for a Space\n   3) Search for your reservation details\n   Q) Quit\n").ToLower();
                 // Switch user input for main menu selction
                 switch (userInput)
                 {
@@ -72,7 +71,7 @@ namespace Capstone
                     case "3":
                         SearchReservationDetails();
                         break;
-                    case "q":
+                    case "q": // Quit
                         Console.WriteLine("Thank you for shopping with Excelsior Venues!");
                         repeat = false;
                         break;
@@ -91,8 +90,7 @@ namespace Capstone
         public void DisplayDesiredSpaces()
         {
             // Retrieves all venues and gathers user input to filter search.
-            ICollection<Venue> venues = venueDAO.GetVenues();
-
+            Dictionary<int, Venue> venues = venueDAO.GetVenues();
             DateTime startDate = CLIHelper.GetDate();
             int stayLength = CLIHelper.GetInteger("How many days will you need the space?: ");
             int numberOfAttendees = CLIHelper.GetInteger("How many people will be in attendance?: ");
@@ -106,13 +104,14 @@ namespace Capstone
             int budget = CLIHelper.GetInteger("What is your budget?: ");
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
             Console.WriteLine("Here are the available spaces based on your requirements:");
-            foreach (Venue venue in venues)
+            foreach (KeyValuePair<int, Venue> venue in venues) // Looping through list of venues so it can associate a specific venue when comparing a category filter to user's choice within DAO.
             {
-                Venue = venue;
+                Venue = venue.Value; // Setting the class feild of reusable Venue to the each venue in the list as it loops. Not necessary as the Venue is not being returned or passed in.
                 Dictionary<int, Space> spacesToAdd = spaceDAO.SearchSpaces(Venue, numberOfAttendees, startDate, stayLength, category, budget, needsAccessible);
-
-                if (spacesToAdd.Count() > 0)
+                
+                if (spacesToAdd.Count() > 0) // Check that list is not empty
                 {
+                    // Looping through the dictionary of spaces obtained based on user's requirements to...?
                     foreach (KeyValuePair<int, Space> space in spacesToAdd)
                     {
                         spaces[space.Key] = space.Value;
@@ -121,7 +120,24 @@ namespace Capstone
                     Console.WriteLine();
                 }
             }
-            if (spaces.Count > 0)
+            if (spaces.Count() == 0) // If the dictionary is empty, the user will be prompt to try another search or to the main menu
+            {
+                bool valid = false;
+                while (!valid)
+                {
+                    string userInput = CLIHelper.GetString("We're sorry, there are no available spaces based on the information you provided.\n  Y/N) Would you like to try another search?").ToLower();
+                    if (userInput == "y")
+                    {
+                        DisplayDesiredSpaces();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        break;
+                    }
+                }
+            }
+            else
             {
                 bool repeat = true;
                 while (repeat)
@@ -129,6 +145,7 @@ namespace Capstone
                     repeat = DisplayReservationMenu(spaces, startDate, stayLength);
                 }
             }
+            
         }
 
 
@@ -138,8 +155,8 @@ namespace Capstone
         /// <returns></returns>
         public void DisplayVenueMenu()
         {
-            bool leaveMenu = false;
-            ICollection<Venue> venues = venueDAO.GetVenues();
+            bool leaveMenu = false; 
+            Dictionary<int, Venue> venues = venueDAO.GetVenues();
             while (!leaveMenu)
             {
                 // Loops through the collection to print details of each venue for selectable options.
@@ -177,13 +194,13 @@ namespace Capstone
         /// Displays all venues in the database as selectable options for user.
         /// </summary>
         /// <param name="venues"></param>
-        public void DisplayAllVenues(ICollection<Venue> venues)
+        public void DisplayAllVenues(Dictionary<int, Venue> venues)
         {
             Console.WriteLine($"Which venue would you like to view?");
             // Loop through the list of venues to display them to the user
-            foreach (Venue venue in venues)
+            foreach (KeyValuePair<int, Venue> venue in venues)
             {
-                Console.WriteLine(String.Format("{0,7}{1}", $"{venue.Id}) ", venue.Name));
+                Console.WriteLine(String.Format("{0,7}{1}", $"{venue.Key}) ", venue.Value.Name));
             }
             Console.WriteLine(String.Format("{0,7}{1}", "R) ", "Return to previous Screen"));
             Console.WriteLine();
@@ -197,7 +214,6 @@ namespace Capstone
         /// <returns></returns>
         public bool DisplayVenueSubMenu()
         {
-
             // Leave menu will leave the loop, otherwise, a later menu, may choose to return to this menu and restart the venue selection process.
             bool leaveMenu = false;
             while (!leaveMenu)
@@ -207,7 +223,7 @@ namespace Capstone
                 Console.WriteLine();
 
                 string userInput = CLIHelper.GetString("What would you like to do next?\n" +
-                "1) View Spaces\n2) View Upcoming Reservations\nR) Return to Previous Screen\n").ToLower();
+                "    1) View Spaces\n    2) View Upcoming Reservations\n    R) Return to Previous Screen\n").ToLower();
                 switch (userInput)
                 {
                     case "1":
@@ -270,16 +286,14 @@ namespace Capstone
             }
             return true;
         }
-        /// <summary>
-        /// Allows user to search for a list of upcoming reservations based on which venue they are in.
-        /// </summary>
-        /// <param name="venueId"></param>
-        /// <returns></returns>
+        
+        // This method is not used and isn't on readme, not sure what it is for atm :)
         public bool SearchReservationDetails()
         {
+            Reservation reservation = new Reservation();
             int reservationId = CLIHelper.GetInteger("What was your confirmation id?: ");
-            Reservation = reservationDAO.SearchReservation(reservationId);
-            Console.WriteLine(Reservation);
+            reservation = reservationDAO.SearchReservation(reservationId);
+            Console.WriteLine(reservation);
             Console.WriteLine();
             return true;
         }

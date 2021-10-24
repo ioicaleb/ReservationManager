@@ -6,8 +6,12 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// This class handles working with obtaining reservation information from the database or creating reservations.
+    /// </summary>
     public class ReservationDAO : IReservationDAO
     {
+        // Query for GetAvailableSpaces
         private const string SqlSelectAvailableSpaces =
             "SELECT id " +
             "FROM space s " +
@@ -15,13 +19,15 @@ namespace Capstone.DAL
             "AND (open_from <= @start_month AND open_to > @end_month " +
             "OR ISNULL(open_from, 0) = 0) " +
             "AND NOT EXISTS (SELECT * FROM reservation r " +
-            "WHERE r.space_id = s.id AND r.start_date <= @end_date AND r.end_date >= @start_date)"; // This completely checks that a persons reservation can not be encapsulated in or overlappint, or be encapsulated by antoher persons existing reserevation.
+            "WHERE r.space_id = s.id AND r.start_date <= @end_date AND r.end_date >= @start_date)";
 
+        // Query for ReserveSpace
         private const string SqlCreateReservation =
             "INSERT INTO reservation(space_id, start_date, end_date, reserved_for) " +
             "VALUES(@space_id, @start_date, @end_date, @reserved_for) " +
             "SELECT @@IDENTITY";
 
+        // Query for GetUpcomingReservations
         private const string SqlSelectNext30Days =
             "SELECT v.name AS venue_name, s.name AS space_name, r.reserved_for, r.start_date, r.end_date " +
             "FROM reservation r " +
@@ -31,8 +37,9 @@ namespace Capstone.DAL
             "v.id = @venueId AND start_date >= @start_date AND start_date <= @end_date " +
             "ORDER BY start_date ";
 
+        // Query for SearchReservation
         private const string SqlSearchReservation =
-           "SELECT r.*, s.name AS space_name, v.name AS venue_name " +
+           "SELECT r.space_id, r.start_date, r.end_date, r.reserved_for, s.name AS space_name, v.name AS venue_name " +
            "FROM reservation r " +
                 "INNER JOIN space s ON s.id = r.space_id " +
                 "INNER JOIN venue v ON v.id = s.venue_id " +
@@ -45,6 +52,14 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Query filters out spaces based on user's needs making sure to not include spaces with existing reservations within that time, or that won't hold the amount of people.
+        /// </summary>
+        /// <param name="numberOfAttendees"></param>
+        /// <param name="venueId"></param>
+        /// <param name="startDate"></param>
+        /// <param name="stayLength"></param>
+        /// <returns></returns>
         public List<int> GetAvailableSpaces(int venueId, DateTime startDate, int stayLength)
         {
             List<int> spacesAvailable = new List<int>();
@@ -81,6 +96,11 @@ namespace Capstone.DAL
             return spacesAvailable;
         }
 
+        /// <summary>
+        /// Inserts necessary information for a new reservation into the database based on user input.
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         public int ReserveSpace(Reservation reservation)
         {
             try
@@ -108,6 +128,11 @@ namespace Capstone.DAL
             return -1;
         }
 
+        /// <summary>
+        /// Searches for reservations within the next 30 days specific to a single venue, which a user will be viewing when prompted to list upcoming reservations for it.
+        /// </summary>
+        /// <param name="venueId"></param>
+        /// <returns></returns>
         public ICollection<Reservation> GetUpcomingReservations(int venueId)
         {
             List<Reservation> reservations = new List<Reservation>();
@@ -146,6 +171,11 @@ namespace Capstone.DAL
             return reservations;
         }
 
+        /// <summary>
+        /// Allows a user to search and obtain all the details of their reservation based on the confirmation number they have in their records.
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <returns></returns>
         public Reservation SearchReservation(int reservationId)
         {
             Reservation reservation = new Reservation();
@@ -164,13 +194,11 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-
                         reservation.VenueName = Convert.ToString(reader["venue_name"]);
                         reservation.SpaceName = Convert.ToString(reader["space_name"]);
                         reservation.ReservedBy = Convert.ToString(reader["reserved_for"]);
                         reservation.StartDate = Convert.ToDateTime(reader["start_date"]);
                         reservation.EndDate = Convert.ToDateTime(reader["end_date"]);
-
                     }
                 }
             }

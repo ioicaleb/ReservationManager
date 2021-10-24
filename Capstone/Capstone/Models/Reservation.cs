@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Capstone.Models
 {
+/// <summary>
+/// This class represents a single reservation, it has properties that will be set and pulled as well as specific format of being printed out.
+/// </summary>
     public class Reservation
     {
         public int Id { get; set; }
@@ -31,12 +34,11 @@ namespace Capstone.Models
             return reservation;
         }
 
+        // The default format for printing a reservation
         public override string ToString()
         {
             return String.Format("{0,-33}{1,-33}{2,-18}{3,-12}{4}",
             VenueName, SpaceName, ReservedBy.Replace(" Reservation", ""), StartDate.ToString("MM/dd/yyyy"), EndDate.ToString("MM/dd/yyyy"));
         }
-
-
     }
 }

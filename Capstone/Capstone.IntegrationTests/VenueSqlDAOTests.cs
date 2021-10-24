@@ -16,7 +16,7 @@ namespace Capstone.IntegrationTests
             VenueDAO venueDAO = new VenueDAO(ConnectionString);
 
             // Act
-            ICollection<Venue> venues = venueDAO.GetVenues();
+            Dictionary<int, Venue> venues = venueDAO.GetVenues();
 
             // Assert
             Assert.IsNotNull(venues);
@@ -30,14 +30,13 @@ namespace Capstone.IntegrationTests
             VenueDAO venueDAO = new VenueDAO(ConnectionString);
 
             // Act
-            ICollection<Venue> venues = venueDAO.GetVenues();
-            Venue[] venuesArray = venues.ToArray();
+            Dictionary<int, Venue> venues = venueDAO.GetVenues();
 
             // Assert
-            Assert.AreEqual(1, venuesArray[0].Id);
-            Assert.AreEqual("Test", venuesArray[0].Name);
-            Assert.AreEqual("Test", venuesArray[0].Description);
-            Assert.AreEqual(2, venuesArray[0].CityId);
+            Assert.AreEqual(1, venues[1].Id);
+            Assert.AreEqual("Test", venues[1].Name);
+            Assert.AreEqual("Test", venues[1].Description);
+            Assert.AreEqual(2, venues[1].CityId);
         }
 
         [TestMethod]
@@ -45,9 +44,8 @@ namespace Capstone.IntegrationTests
         {
             // Arrange
             VenueDAO venueDAO = new VenueDAO(ConnectionString);
-            ICollection<Venue> venues = venueDAO.GetVenues();
-            Venue[] venuesArray = venues.ToArray();
-            Venue venue = venuesArray[0];
+            Dictionary<int,Venue> venues = venueDAO.GetVenues();
+            Venue venue = venues[1];
 
             // Act
             venue.Categories = venueDAO.GetCategory(1);

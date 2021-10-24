@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// Interface implemented by SpaceDAO
+    /// </summary>
     public interface ISpaceDAO
     {
         public Dictionary<int, Space> GetSpaces(Venue venue);

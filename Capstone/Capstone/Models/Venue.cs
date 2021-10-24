@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Capstone.Models
 {
+    /// <summary>
+    /// This class represents a single venue, it has properties that will be set and pulled as well as specific format of being printed out.
+    /// </summary>
     public class Venue
     {
 
@@ -21,17 +24,14 @@ namespace Capstone.Models
         /// Uses the user input to pick desired venue from array by index.
         /// </summary>
         /// <param name="venueId"></param>
-        public Venue GetSelectedVenue(int venueId, ICollection<Venue> venues) // Takes in the venueId which is parsed num input representing id of venue
+        // Takes in the venueId which is parsed num input representing id of venue
+        public Venue GetSelectedVenue(int venueId, Dictionary<int, Venue> venues)
         {
-            //Obtaining the values from the list as array indexes in order to pick apart and display accordingly.
-            Venue[] venuesArr = venues.ToArray();
-            
-
-            Venue currVenue = venuesArr[venueId - 1]; // Id in SQL is 1 more than the index
-
+            Venue currVenue = venues[venueId];
             return currVenue;
         }
 
+        // The default format for printing a venue
         public override string ToString()
         {
             return $"{Name}\n" +

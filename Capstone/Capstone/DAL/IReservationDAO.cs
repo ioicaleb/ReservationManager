@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// Interface implemented by ReservationDAO
+    /// </summary>
     public interface IReservationDAO
     {
         public List<int> GetAvailableSpaces(int venueId, DateTime startDate, int stayLength);

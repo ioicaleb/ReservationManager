@@ -18,8 +18,8 @@ namespace Capstone.IntegrationTests
                 Id = 1,
                 Name = "Test"
             };
-            List<Venue> venues = new List<Venue>();
-            venues.Add(venue);
+            Dictionary<int,Venue> venues = new Dictionary<int, Venue>();
+            venues[1] = venue;
 
             //Act
             Venue result = venue.GetSelectedVenue(1, venues);

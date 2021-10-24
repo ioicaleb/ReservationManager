@@ -16,9 +16,8 @@ namespace Capstone.IntegrationTests
             // Arrange
             SpaceDAO spaceDAO = new SpaceDAO(ConnectionString);
             VenueDAO venueDAO = new VenueDAO(ConnectionString);
-            ICollection<Venue> venues = venueDAO.GetVenues();
-            Venue[] venuesArray = venues.ToArray();
-            Venue venue = venuesArray[0];
+            Dictionary<int, Venue> venues = venueDAO.GetVenues();
+            Venue venue = venues[1];
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
 
             // Act
@@ -55,9 +54,8 @@ namespace Capstone.IntegrationTests
             // Arrange
             SpaceDAO spaceDAO = new SpaceDAO(ConnectionString);
             VenueDAO venueDAO = new VenueDAO(ConnectionString);
-            ICollection<Venue> venues = venueDAO.GetVenues();
-            Venue[] venuesArray = venues.ToArray();
-            Venue venue = venuesArray[0];
+            Dictionary<int,Venue> venues = venueDAO.GetVenues();
+            Venue venue = venues[1];
             Dictionary<int, Space> spaces = new Dictionary<int, Space>();
             DateTime date = DateTime.Parse("2021/07/07");
 

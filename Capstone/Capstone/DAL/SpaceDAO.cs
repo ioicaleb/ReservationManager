@@ -6,8 +6,12 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// This class handles working with obtaining space information from the database
+    /// </summary>
     public class SpaceDAO : ISpaceDAO
     {
+        // Query for GetSpaces
         private const string SqlSelectSpacesForVenue =
             "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
                 "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
@@ -15,7 +19,8 @@ namespace Capstone.DAL
                 "INNER JOIN venue v ON v.id = s.venue_id " +
             "WHERE s.venue_id = @venue_id";
 
-        private const string SqlSearch =
+        // Query for all spaces based on user input
+        private const string SqlSearchSpaces =
             "SELECT s.id, s.venue_id, s.name, s.is_accessible, ISNULL(s.open_from, 0) AS open_from, " +
                 "ISNULL(s.open_to, 13) AS open_to, s.daily_rate, s.max_occupancy " +
             "FROM space s " +
@@ -101,7 +106,7 @@ namespace Capstone.DAL
                 {
                     conn.Open();
                     DateTime endDate = startDate.AddDays(stayLength);
-                    SqlCommand command = new SqlCommand(SqlSearch, conn);
+                    SqlCommand command = new SqlCommand(SqlSearchSpaces, conn);
                     command.Parameters.AddWithValue("@venue_id", venue.Id);
                     command.Parameters.AddWithValue("@number_of_attendees", numberOfAttendees);
                     command.Parameters.AddWithValue("@start_date", startDate);
@@ -153,6 +158,12 @@ namespace Capstone.DAL
             return spaces;
         }
 
+        /// <summary>
+        /// Takes in a date, and based on the current date int, it will pull a month by it's index corresponding with the correct month.
+        /// This is so that the database's 12 count for month's by number can be evaluated by the user's desired stay.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public string ChangeIntToMonthAbbr(int date)
         {
             List<string> months = new List<string> { "ALWAYS", "Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec.", "NEVER" };
